@@ -13,6 +13,8 @@
 		4F23304925BE35F70034B8E0 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F23304825BE35F70034B8E0 /* ViewController.swift */; };
 		4F23304E25BE35F70034B8E0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4F23304D25BE35F70034B8E0 /* Assets.xcassets */; };
 		4F23305125BE35F70034B8E0 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4F23304F25BE35F70034B8E0 /* LaunchScreen.storyboard */; };
+		4F23308B25BE3CC50034B8E0 /* TableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F23308A25BE3CC50034B8E0 /* TableViewCell.swift */; };
+		4F23308E25BE3CFF0034B8E0 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F23308D25BE3CFF0034B8E0 /* Constants.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -25,6 +27,8 @@
 		4F23304D25BE35F70034B8E0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4F23305025BE35F70034B8E0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		4F23305225BE35F70034B8E0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4F23308A25BE3CC50034B8E0 /* TableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewCell.swift; sourceTree = "<group>"; };
+		4F23308D25BE3CFF0034B8E0 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		658EF1D89BE832674DDA0CC4 /* Pods-itunesApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-itunesApp.release.xcconfig"; path = "Target Support Files/Pods-itunesApp/Pods-itunesApp.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -61,14 +65,32 @@
 		4F23304325BE35F70034B8E0 /* itunesApp */ = {
 			isa = PBXGroup;
 			children = (
-				4F23304425BE35F70034B8E0 /* AppDelegate.swift */,
-				4F23304625BE35F70034B8E0 /* SceneDelegate.swift */,
+				4F23309125BE3F000034B8E0 /* Features */,
+				4F23309225BE3F070034B8E0 /* Services */,
 				4F23304825BE35F70034B8E0 /* ViewController.swift */,
+				4F23308A25BE3CC50034B8E0 /* TableViewCell.swift */,
+				4F23308D25BE3CFF0034B8E0 /* Constants.swift */,
 				4F23304D25BE35F70034B8E0 /* Assets.xcassets */,
 				4F23304F25BE35F70034B8E0 /* LaunchScreen.storyboard */,
 				4F23305225BE35F70034B8E0 /* Info.plist */,
+				4F23304425BE35F70034B8E0 /* AppDelegate.swift */,
+				4F23304625BE35F70034B8E0 /* SceneDelegate.swift */,
 			);
 			path = itunesApp;
+			sourceTree = "<group>";
+		};
+		4F23309125BE3F000034B8E0 /* Features */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+		4F23309225BE3F070034B8E0 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Services;
 			sourceTree = "<group>";
 		};
 		7E1C3FDECFA730452442F518 /* Frameworks */ = {
@@ -202,7 +224,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				4F23304925BE35F70034B8E0 /* ViewController.swift in Sources */,
+				4F23308B25BE3CC50034B8E0 /* TableViewCell.swift in Sources */,
 				4F23304525BE35F70034B8E0 /* AppDelegate.swift in Sources */,
+				4F23308E25BE3CFF0034B8E0 /* Constants.swift in Sources */,
 				4F23304725BE35F70034B8E0 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
