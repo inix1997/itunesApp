@@ -96,7 +96,7 @@ class MainViewController: UIViewController {
     }
     
     func getData(label: String) {
-        let finalString = Constants.kSearchApiUrl.replacingOccurrences(of: "[data]", with: label)
+        let finalString = Constants.kSearchSongApiUrl.replacingOccurrences(of: "[data]", with: label)
         AF.request(finalString).responseJSON { response in
             switch response.result {
             case .success(let value):

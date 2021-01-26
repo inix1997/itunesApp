@@ -36,14 +36,14 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="M1j-6H-FVW">
-                                <rect key="frame" x="30" y="386" width="354" height="476"/>
+                                <rect key="frame" x="20" y="386" width="384" height="476"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="9HH-u2-r6I" customClass="SongDetailTableViewCell" customModule="itunesApp" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="28" width="354" height="43.5"/>
+                                        <rect key="frame" x="0.0" y="28" width="384" height="43.5"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="9HH-u2-r6I" id="KMO-8N-MrL">
-                                            <rect key="frame" x="0.0" y="0.0" width="354" height="43.5"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="384" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -60,7 +60,7 @@
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="M1j-6H-FVW" firstAttribute="bottom" secondItem="Azf-8C-69A" secondAttribute="bottom" id="4IB-Zn-lOx"/>
-                            <constraint firstItem="Azf-8C-69A" firstAttribute="trailing" secondItem="M1j-6H-FVW" secondAttribute="trailing" constant="30" id="6RO-ic-DZX"/>
+                            <constraint firstItem="Azf-8C-69A" firstAttribute="trailing" secondItem="M1j-6H-FVW" secondAttribute="trailing" constant="10" id="6RO-ic-DZX"/>
                             <constraint firstItem="M1j-6H-FVW" firstAttribute="top" secondItem="CvC-di-egC" secondAttribute="bottom" constant="30" id="79Y-z3-7dW"/>
                             <constraint firstItem="Azf-8C-69A" firstAttribute="trailing" secondItem="CvC-di-egC" secondAttribute="trailing" constant="10" id="8OR-SJ-8m7"/>
                             <constraint firstItem="NQa-rs-bhU" firstAttribute="top" secondItem="kbY-Rf-mSo" secondAttribute="bottom" constant="20" id="K5O-bK-9hw"/>
@@ -69,7 +69,7 @@
                             <constraint firstItem="kbY-Rf-mSo" firstAttribute="top" secondItem="H6o-bv-TH5" secondAttribute="bottom" constant="40" id="gVC-ou-iig"/>
                             <constraint firstItem="CvC-di-egC" firstAttribute="leading" secondItem="Azf-8C-69A" secondAttribute="leading" constant="30" id="iaN-13-mcO"/>
                             <constraint firstItem="H6o-bv-TH5" firstAttribute="top" secondItem="Azf-8C-69A" secondAttribute="top" constant="40" id="n8j-7q-rbc"/>
-                            <constraint firstItem="M1j-6H-FVW" firstAttribute="leading" secondItem="Azf-8C-69A" secondAttribute="leading" constant="30" id="sDA-ab-iuK"/>
+                            <constraint firstItem="M1j-6H-FVW" firstAttribute="leading" secondItem="Azf-8C-69A" secondAttribute="leading" constant="20" id="sDA-ab-iuK"/>
                             <constraint firstItem="CvC-di-egC" firstAttribute="top" secondItem="NQa-rs-bhU" secondAttribute="bottom" constant="30" id="t8Z-DP-gQz"/>
                             <constraint firstItem="NQa-rs-bhU" firstAttribute="centerX" secondItem="Azf-8C-69A" secondAttribute="centerX" id="vXe-MY-r4w"/>
                         </constraints>

@@ -36,6 +36,7 @@ class ViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
+        navigationController?.navigationBar.prefersLargeTitles = true
         navigationController?.navigationBar.isHidden = false
     }
     
@@ -48,7 +49,7 @@ class ViewController: UIViewController {
     }
     
     func getData(label: String, data: Any) {
-        let finalString = Constants.kSearchApiUrl.replacingOccurrences(of: "[data]", with: label)
+        let finalString = Constants.kSearchAlbumApiUrl.replacingOccurrences(of: "[data]", with: label)
         AF.request(finalString).responseJSON { response in
             switch response.result {
             case .success(let value):
