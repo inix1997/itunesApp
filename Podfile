@@ -8,7 +8,9 @@ pod 'SDWebImage'
 pod 'MaterialComponents'
 pod 'NVActivityIndicatorView'
 pod 'SnapKit'
-
+pod 'MBProgressHUD', '~> 0.9.2'
+pod 'SwiftyGif'
+pod 'MaterialComponents'
 
 target 'itunesApp' do
 end

@@ -9,7 +9,8 @@ import Foundation
 
 
 public struct Constants {
-    static var kSearchApiUrl = "https://itunes.apple.com/search?term=in+utero&mediaType=music&limit=20"
+    static var kSearchApiUrl = "https://itunes.apple.com/search?term=[data]&mediaType=music&limit=20"
+    static var loading = "Loading..."
     
     struct Constraits {
         static var kLeftInsetConstrait = 10.0

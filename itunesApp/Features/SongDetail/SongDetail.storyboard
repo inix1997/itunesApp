@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Song Detail View Controller-->
+        <scene sceneID="T2O-wY-9wx">
+            <objects>
+                <viewController storyboardIdentifier="SongDetailViewController" id="2eP-tQ-KPz" customClass="SongDetailViewController" customModule="itunesApp" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="r3v-0P-fOY">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="H6o-bv-TH5">
+                                <rect key="frame" x="157" y="84" width="100" height="100"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="100" id="3JG-aF-jp6"/>
+                                    <constraint firstAttribute="width" constant="100" id="vP8-mz-38M"/>
+                                </constraints>
+                            </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="BAND_NAME" textAlignment="natural" lineBreakMode="clip" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NQa-rs-bhU">
+                                <rect key="frame" x="124.5" y="277" width="165.5" height="28"/>
+                                <fontDescription key="fontDescription" name="Verdana-Bold" family="Verdana" pointSize="23"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="KNOW_THE_ALBUM" textAlignment="natural" lineBreakMode="clip" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CvC-di-egC">
+                                <rect key="frame" x="30" y="335" width="374" height="21"/>
+                                <fontDescription key="fontDescription" name="Verdana" family="Verdana" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="M1j-6H-FVW">
+                                <rect key="frame" x="30" y="386" width="354" height="476"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="9HH-u2-r6I" customClass="SongDetailTableViewCell" customModule="itunesApp" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="28" width="354" height="43.5"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="9HH-u2-r6I" id="KMO-8N-MrL">
+                                            <rect key="frame" x="0.0" y="0.0" width="354" height="43.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </prototypes>
+                            </tableView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="ALBUM_NAME" textAlignment="natural" lineBreakMode="clip" numberOfLines="0" baselineAdjustment="alignBaselines" minimumFontSize="14" adjustsFontForContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="kbY-Rf-mSo">
+                                <rect key="frame" x="100.5" y="224" width="213.5" height="33"/>
+                                <fontDescription key="fontDescription" name="Verdana-BoldItalic" family="Verdana" pointSize="27"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="Azf-8C-69A"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="M1j-6H-FVW" firstAttribute="bottom" secondItem="Azf-8C-69A" secondAttribute="bottom" id="4IB-Zn-lOx"/>
+                            <constraint firstItem="Azf-8C-69A" firstAttribute="trailing" secondItem="M1j-6H-FVW" secondAttribute="trailing" constant="30" id="6RO-ic-DZX"/>
+                            <constraint firstItem="M1j-6H-FVW" firstAttribute="top" secondItem="CvC-di-egC" secondAttribute="bottom" constant="30" id="79Y-z3-7dW"/>
+                            <constraint firstItem="Azf-8C-69A" firstAttribute="trailing" secondItem="CvC-di-egC" secondAttribute="trailing" constant="10" id="8OR-SJ-8m7"/>
+                            <constraint firstItem="NQa-rs-bhU" firstAttribute="top" secondItem="kbY-Rf-mSo" secondAttribute="bottom" constant="20" id="K5O-bK-9hw"/>
+                            <constraint firstItem="kbY-Rf-mSo" firstAttribute="centerX" secondItem="Azf-8C-69A" secondAttribute="centerX" id="UYT-Gb-F0u"/>
+                            <constraint firstItem="H6o-bv-TH5" firstAttribute="centerX" secondItem="Azf-8C-69A" secondAttribute="centerX" id="c5U-Ou-Oo7"/>
+                            <constraint firstItem="kbY-Rf-mSo" firstAttribute="top" secondItem="H6o-bv-TH5" secondAttribute="bottom" constant="40" id="gVC-ou-iig"/>
+                            <constraint firstItem="CvC-di-egC" firstAttribute="leading" secondItem="Azf-8C-69A" secondAttribute="leading" constant="30" id="iaN-13-mcO"/>
+                            <constraint firstItem="H6o-bv-TH5" firstAttribute="top" secondItem="Azf-8C-69A" secondAttribute="top" constant="40" id="n8j-7q-rbc"/>
+                            <constraint firstItem="M1j-6H-FVW" firstAttribute="leading" secondItem="Azf-8C-69A" secondAttribute="leading" constant="30" id="sDA-ab-iuK"/>
+                            <constraint firstItem="CvC-di-egC" firstAttribute="top" secondItem="NQa-rs-bhU" secondAttribute="bottom" constant="30" id="t8Z-DP-gQz"/>
+                            <constraint firstItem="NQa-rs-bhU" firstAttribute="centerX" secondItem="Azf-8C-69A" secondAttribute="centerX" id="vXe-MY-r4w"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="albumName" destination="kbY-Rf-mSo" id="MX0-lK-xnO"/>
+                        <outlet property="artImage" destination="H6o-bv-TH5" id="lkD-Iy-wiD"/>
+                        <outlet property="bandName" destination="NQa-rs-bhU" id="Uwb-t7-1gS"/>
+                        <outlet property="getToKnowAlbum" destination="CvC-di-egC" id="dZ9-4w-S7a"/>
+                        <outlet property="tableView" destination="M1j-6H-FVW" id="X8Y-Ij-mXd"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Zko-Kd-go3" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-613.04347826086962" y="60.9375"/>
+        </scene>
+    </scenes>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>
