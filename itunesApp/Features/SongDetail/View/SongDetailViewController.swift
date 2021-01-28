@@ -7,6 +7,7 @@
 
 import UIKit
 import SDWebImage
+import AVFoundation
 
 class SongDetailViewController: UIViewController {
     
@@ -17,6 +18,7 @@ class SongDetailViewController: UIViewController {
     @IBOutlet var tableView: UITableView!
     var details: iTunesServiceModel?
     var albumArray: Array<iTunesServiceModel>?
+    var player : AVPlayer?
     
     init(details: iTunesServiceModel) {
         super.init(nibName: nil, bundle: nil)
@@ -77,7 +79,7 @@ extension SongDetailViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 20
+        return albumArray?.count ?? 1
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -91,6 +93,25 @@ extension SongDetailViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let albumItem = albumArray?[indexPath.row]
+        if let urlPreview = albumItem?.previewUrl {
+            let url = NSURL(string: urlPreview)
+            var downloadTask: URLSessionDownloadTask
+            downloadTask = URLSession.shared.downloadTask(with: url! as URL, completionHandler: { [weak self](URL, response, error) -> Void in
+                do {
+                    let playerItem = AVPlayerItem(url: url! as URL)
+                    self?.player = try AVPlayer(playerItem:playerItem)
+                    self?.player!.volume = 3.0
+                    self?.player!.play()
+                } catch let error as NSError {
+                    self?.player = nil
+                    print(error.localizedDescription)
+                } catch {
+                    print("AVAudioPlayer init failed")
+                }
+            })
+            downloadTask.resume()
+        }
         tableView.deselectRow(at: indexPath, animated: true)
     }
 }
