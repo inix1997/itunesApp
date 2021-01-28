@@ -15,22 +15,22 @@ class SongDetailViewController: UIViewController {
     @IBOutlet var bandName: UILabel!
     @IBOutlet var albumName: UILabel!
     @IBOutlet var tableView: UITableView!
-    var details: Any?
-    var albumArray: Array<Any>?
-
-    init(details: Any) {
+    var details: iTunesServiceModel?
+    var albumArray: Array<iTunesServiceModel>?
+    
+    init(details: iTunesServiceModel) {
         super.init(nibName: nil, bundle: nil)
         self.details = details
     }
     
     required init?(coder aDecoder: NSCoder) {
-       super.init(coder: aDecoder)
+        super.init(coder: aDecoder)
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         navigationController?.navigationBar.prefersLargeTitles = false
-        title = (details as AnyObject).value(forKey: "trackName") as? String ?? ""
+        title = details?.trackName
         self.navigationController?.isNavigationBarHidden = false
     }
     
@@ -50,15 +50,20 @@ class SongDetailViewController: UIViewController {
     }
     
     func setupViews() {
-        let collectionName = (details as AnyObject).value(forKey: "collectionName") as? String ?? ""
+        let collectionName = details?.collectionName
         albumName.text = collectionName
-        let artistName = (details as AnyObject).value(forKey: "artistName") as? String ?? ""
+        let artistName = details?.artistName
         bandName.text = artistName
-        getToKnowAlbum.text = "Get to know the full song list of \(collectionName)"
+        if let collectionNameFinal = collectionName {
+            getToKnowAlbum.text = "Get to know the full song list of \(collectionNameFinal)"
+        } else {
+            getToKnowAlbum.text = "Get to know the full song list of the album"
+            
+        }
     }
     
     func loadImage() {
-        let url = URL(string: (details as AnyObject).value(forKey: "artworkUrl100") as? String ?? "")
+        let url = URL(string: details?.artworkUrl100 ?? "")
         artImage.sd_imageIndicator = SDWebImageActivityIndicator.gray
         artImage.sd_setImage(with: url, completed: nil)
         artImage.contentMode = .scaleAspectFit
@@ -79,7 +84,7 @@ extension SongDetailViewController: UITableViewDataSource, UITableViewDelegate {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "songDetailCell", for: indexPath) as! SongDetailTableViewCell
         let data = albumArray?[indexPath.row]
-        cell.textLabel?.text = (data as AnyObject).value(forKey: "trackName") as? String
+        cell.textLabel?.text = data?.trackName
         cell.textLabel?.numberOfLines = 1
         
         return cell

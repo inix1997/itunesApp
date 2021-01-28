@@ -13,11 +13,11 @@ import SwiftyGif
 import MaterialComponents
 
 class MainViewController: UIViewController {
-    var resultsArray: Array<Any>?
+    var resultsArray: Array<iTunesServiceModel>?
     var welcomeLabel = UILabel()
     var confirmButton = MDCButton()
     let textField = MDCFilledTextArea()
-
+    
     var welcomeText = "WELCOME!"
     var descriptionLabelText = "Type something to search"
     var searchText = "Search"
@@ -31,7 +31,7 @@ class MainViewController: UIViewController {
         super.viewDidLoad()
         setupViews()
     }
-
+    
     func setupViews() {
         view.addSubview(welcomeLabel)
         view.addSubview(textField)
@@ -58,7 +58,7 @@ class MainViewController: UIViewController {
         
         textField.label.text = descriptionLabelText
         textField.sizeToFit()
-    
+        
         welcomeLabel.text = welcomeText
         welcomeLabel.font = UIFont(name: "Chalkduster", size: 50)
         
@@ -89,6 +89,19 @@ class MainViewController: UIViewController {
         if let textFieldString = textField.textView.text, textFieldString != "" {
             var finalString = textFieldString.replacingOccurrences(of: " ", with: "+")
             finalString = finalString.replacingOccurrences(of: "ñ", with: "n")
+            finalString = finalString.replacingOccurrences(of: "ó", with: "o")
+            finalString = finalString.replacingOccurrences(of: "á", with: "a")
+            finalString = finalString.replacingOccurrences(of: "é", with: "e")
+            finalString = finalString.replacingOccurrences(of: "í", with: "i")
+            finalString = finalString.replacingOccurrences(of: "ú", with: "u")
+            finalString = finalString.replacingOccurrences(of: "Ñ", with: "n")
+            finalString = finalString.replacingOccurrences(of: "Ó", with: "o")
+            finalString = finalString.replacingOccurrences(of: "Á", with: "a")
+            finalString = finalString.replacingOccurrences(of: "É", with: "e")
+            finalString = finalString.replacingOccurrences(of: "Í", with: "i")
+            finalString = finalString.replacingOccurrences(of: "Ú", with: "u")
+            finalString = finalString.replacingOccurrences(of: "(", with: "")
+            finalString = finalString.replacingOccurrences(of: ")", with: "")
             getData(label: finalString.lowercased())
         } else {
             hideLoading()
@@ -99,16 +112,20 @@ class MainViewController: UIViewController {
         let finalString = Constants.kSearchSongApiUrl.replacingOccurrences(of: "[data]", with: label)
         AF.request(finalString).responseJSON { response in
             switch response.result {
-            case .success(let value):
-                if let json = value as? NSDictionary {
-                    if let responseValue = json["results"] as? Array<Any> {
-                        self.resultsArray = responseValue
-                        self.hideLoading()
-                        let viewController = ViewController(songsDetails: self.resultsArray ?? [])
-                        self.navigationController?.pushViewController(viewController, animated: true)
+            case .success(_):
+                do {
+                    if let data = response.data {
+                        let response = try JSONDecoder().decode(iTunesServiceModelGeneral.self, from: data)
+                        self.resultsArray = response.results
                     }
+                } catch {
+                    print(error.localizedDescription)
                 }
+                self.hideLoading()
+                let viewController = ViewController(songsDetails: self.resultsArray ?? [])
+                self.navigationController?.pushViewController(viewController, animated: true)
             case .failure(let error):
+                self.hideLoading()
                 print(error)
             }
         }
@@ -119,7 +136,7 @@ class MainViewController: UIViewController {
         loadingNotification?.mode = MBProgressHUDMode.indeterminate
         loadingNotification?.labelText = Constants.loading
     }
-
+    
     func hideLoading() {
         MBProgressHUD.hideAllHUDs(for: view, animated: true)
     }

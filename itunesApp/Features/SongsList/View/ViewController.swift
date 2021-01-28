@@ -12,9 +12,10 @@ import MBProgressHUD
 
 class ViewController: UIViewController {
     var tableView = UITableView()
-    var resultsArray: Array<Any>?
+    var resultsArray: Array<iTunesServiceModel>?
+    var resultsDetailArray: Array<iTunesServiceModel>?
 
-    init(songsDetails: Array<Any>) {
+    init(songsDetails: Array<iTunesServiceModel>) {
         super.init(nibName: nil, bundle: nil)
         self.resultsArray = songsDetails
     }
@@ -33,7 +34,7 @@ class ViewController: UIViewController {
         definesPresentationContext = true
         setupViews()
     }
-
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         navigationController?.navigationBar.prefersLargeTitles = true
@@ -41,27 +42,32 @@ class ViewController: UIViewController {
     }
     
     func setupViews() {
-        title = "Songs"
+        title = "Search results"
         view.addSubview(tableView)
         tableView.snp.makeConstraints { (make) -> Void in
             make.edges.equalTo(self.view)
         }
     }
     
-    func getData(label: String, data: Any) {
+    func getData(label: String, data: iTunesServiceModel) {
         let finalString = Constants.kSearchAlbumApiUrl.replacingOccurrences(of: "[data]", with: label)
         AF.request(finalString).responseJSON { response in
             switch response.result {
-            case .success(let value):
-                if let json = value as? NSDictionary {
-                    if let responseValue = json["results"] as? Array<Any> {
-                        self.hideLoading()
-                        let viewController = UIStoryboard(name: "SongDetail", bundle: nil).instantiateViewController(withIdentifier: "SongDetailViewController") as! SongDetailViewController
-                        viewController.details = data
-                        viewController.albumArray = responseValue
-                        self.navigationController?.pushViewController(viewController, animated: true)
+            case .success(_):
+                do {
+                    if let data = response.data {
+                        let response = try JSONDecoder().decode(iTunesServiceModelGeneral.self, from: data)
+                        self.resultsDetailArray = response.results
                     }
+                } catch {
+                    print(error.localizedDescription)
                 }
+                
+                self.hideLoading()
+                let viewController = UIStoryboard(name: "SongDetail", bundle: nil).instantiateViewController(withIdentifier: "SongDetailViewController") as! SongDetailViewController
+                viewController.details = data
+                viewController.albumArray = self.resultsDetailArray
+                self.navigationController?.pushViewController(viewController, animated: true)
             case .failure(let error):
                 print(error)
             }
@@ -73,7 +79,7 @@ class ViewController: UIViewController {
         loadingNotification?.mode = MBProgressHUDMode.indeterminate
         loadingNotification?.labelText = Constants.loading
     }
-
+    
     func hideLoading() {
         MBProgressHUD.hideAllHUDs(for: view, animated: true)
     }
@@ -92,26 +98,35 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "viewCell", for: indexPath) as! TableViewCell
-        
         let data = resultsArray?[indexPath.row]
-
-        cell.textLabel?.text = (data as AnyObject).value(forKey: "trackName") as? String
+        cell.textLabel?.text = data?.trackName
         cell.textLabel?.numberOfLines = 1
-        cell.detailTextLabel?.text = (data as AnyObject).value(forKey: "artistName") as? String
-        
-        let productImageView = UIImageView()
-        let url = URL(string: (data as AnyObject).value(forKey: "previewUrl") as? String ?? "")
-        cell.imageView?.image = productImageView.image
+        cell.detailTextLabel?.text = data?.artistName
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let data = resultsArray?[indexPath.row]
         showLoading()
-        let albumSongs = (data as AnyObject).value(forKey: "collectionName") as? String ?? ""
-        var finalString = albumSongs.replacingOccurrences(of: " ", with: "+")
-        finalString = finalString.replacingOccurrences(of: "ñ", with: "n")
-        getData(label: finalString.lowercased(), data: data)
+        let albumSongs = data?.collectionName
+        var finalString = albumSongs?.replacingOccurrences(of: " ", with: "+")
+        finalString = finalString?.replacingOccurrences(of: "ñ", with: "n")
+        finalString = finalString?.replacingOccurrences(of: "ó", with: "o")
+        finalString = finalString?.replacingOccurrences(of: "á", with: "a")
+        finalString = finalString?.replacingOccurrences(of: "é", with: "e")
+        finalString = finalString?.replacingOccurrences(of: "í", with: "i")
+        finalString = finalString?.replacingOccurrences(of: "ú", with: "u")
+        finalString = finalString?.replacingOccurrences(of: "Ñ", with: "n")
+        finalString = finalString?.replacingOccurrences(of: "Ó", with: "o")
+        finalString = finalString?.replacingOccurrences(of: "Á", with: "a")
+        finalString = finalString?.replacingOccurrences(of: "É", with: "e")
+        finalString = finalString?.replacingOccurrences(of: "Í", with: "i")
+        finalString = finalString?.replacingOccurrences(of: "Ú", with: "u")
+        finalString = finalString?.replacingOccurrences(of: "(", with: "")
+        finalString = finalString?.replacingOccurrences(of: ")", with: "")
+        if let finalData = data {
+            getData(label: finalString?.lowercased() ?? "", data: finalData)
+        }
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
