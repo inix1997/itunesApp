@@ -103,6 +103,8 @@ extension SongDetailViewController: UITableViewDataSource, UITableViewDelegate {
                     self?.player = try AVPlayer(playerItem:playerItem)
                     self?.player!.volume = 3.0
                     self?.player!.play()
+                    let audioSession = AVAudioSession.sharedInstance()
+                    try audioSession.setCategory(AVAudioSession.Category.playback, options: .duckOthers)
                 } catch let error as NSError {
                     self?.player = nil
                     print(error.localizedDescription)
