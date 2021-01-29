@@ -24,6 +24,7 @@
 		4FC741CE25C31D1500D5A44E /* ViewControllerPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FC741CD25C31D1500D5A44E /* ViewControllerPresenter.swift */; };
 		4FC741D125C31D1F00D5A44E /* MainViewControllerPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FC741D025C31D1F00D5A44E /* MainViewControllerPresenter.swift */; };
 		4FC741D425C31D2C00D5A44E /* SongDetailViewPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FC741D325C31D2C00D5A44E /* SongDetailViewPresenter.swift */; };
+		4FC741D925C3414100D5A44E /* SearchsModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 4FC741D725C3414100D5A44E /* SearchsModel.xcdatamodeld */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -47,6 +48,7 @@
 		4FC741CD25C31D1500D5A44E /* ViewControllerPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewControllerPresenter.swift; sourceTree = "<group>"; };
 		4FC741D025C31D1F00D5A44E /* MainViewControllerPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewControllerPresenter.swift; sourceTree = "<group>"; };
 		4FC741D325C31D2C00D5A44E /* SongDetailViewPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongDetailViewPresenter.swift; sourceTree = "<group>"; };
+		4FC741D825C3414100D5A44E /* SearchsModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = SearchsModel.xcdatamodel; sourceTree = "<group>"; };
 		658EF1D89BE832674DDA0CC4 /* Pods-itunesApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-itunesApp.release.xcconfig"; path = "Target Support Files/Pods-itunesApp/Pods-itunesApp.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -92,6 +94,7 @@
 				4F23305225BE35F70034B8E0 /* Info.plist */,
 				4F23304425BE35F70034B8E0 /* AppDelegate.swift */,
 				4F23304625BE35F70034B8E0 /* SceneDelegate.swift */,
+				4FC741D725C3414100D5A44E /* SearchsModel.xcdatamodeld */,
 			);
 			path = itunesApp;
 			sourceTree = "<group>";
@@ -337,6 +340,7 @@
 				4FC741D125C31D1F00D5A44E /* MainViewControllerPresenter.swift in Sources */,
 				4F23304525BE35F70034B8E0 /* AppDelegate.swift in Sources */,
 				4FC741CE25C31D1500D5A44E /* ViewControllerPresenter.swift in Sources */,
+				4FC741D925C3414100D5A44E /* SearchsModel.xcdatamodeld in Sources */,
 				4FC741D425C31D2C00D5A44E /* SongDetailViewPresenter.swift in Sources */,
 				4F23309525BE43080034B8E0 /* MainViewController.swift in Sources */,
 				4F23309D25BE43A90034B8E0 /* SongDetailViewController.swift in Sources */,
@@ -539,6 +543,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		4FC741D725C3414100D5A44E /* SearchsModel.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				4FC741D825C3414100D5A44E /* SearchsModel.xcdatamodel */,
+			);
+			currentVersion = 4FC741D825C3414100D5A44E /* SearchsModel.xcdatamodel */;
+			path = SearchsModel.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 4F23303925BE35F70034B8E0 /* Project object */;
 }
