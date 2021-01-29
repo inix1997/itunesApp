@@ -18,13 +18,10 @@
 
 #import <MDFInternationalization/MDFInternationalization.h>
 
+#import "MaterialMath.h"
+#import "MaterialNavigationBar.h"
 #import "private/MDCBottomAppBarAttributes.h"
 #import "private/MDCBottomAppBarLayer.h"
-#import "MaterialButtons.h"
-#import "MaterialElevation.h"
-#import "MaterialNavigationBar.h"
-#import "MaterialShadowElevations.h"
-#import "MaterialMath.h"
 
 static NSString *kMDCBottomAppBarViewAnimKeyString = @"AnimKey";
 static NSString *kMDCBottomAppBarViewPathString = @"path";
@@ -32,6 +29,7 @@ static NSString *kMDCBottomAppBarViewPositionString = @"position";
 static const CGFloat kMDCBottomAppBarViewFloatingButtonCenterToNavigationBarTopOffset = 0;
 static const CGFloat kMDCBottomAppBarViewFloatingButtonElevationPrimary = 6;
 static const CGFloat kMDCBottomAppBarViewFloatingButtonElevationSecondary = 4;
+static const int kMDCButtonAnimationDuration = 200;
 
 @interface MDCBottomAppBarCutView : UIView
 
@@ -177,8 +175,6 @@ static const CGFloat kMDCBottomAppBarViewFloatingButtonElevationSecondary = 4;
   if (animated) {
     CABasicAnimation *pathAnimation =
         [CABasicAnimation animationWithKeyPath:kMDCBottomAppBarViewPathString];
-    pathAnimation.timingFunction =
-        [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
     pathAnimation.duration = kMDCFloatingButtonExitDuration;
     pathAnimation.fromValue = (id)self.bottomBarLayer.presentationLayer.path;
     pathAnimation.toValue = (__bridge id _Nullable)(pathWithCut);
@@ -201,8 +197,6 @@ static const CGFloat kMDCBottomAppBarViewFloatingButtonElevationSecondary = 4;
   if (animated) {
     CABasicAnimation *pathAnimation =
         [CABasicAnimation animationWithKeyPath:kMDCBottomAppBarViewPathString];
-    pathAnimation.timingFunction =
-        [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
     pathAnimation.duration = kMDCFloatingButtonEnterDuration;
     pathAnimation.fromValue = (id)self.bottomBarLayer.presentationLayer.path;
     pathAnimation.toValue = (__bridge id _Nullable)(pathWithoutCut);
@@ -223,8 +217,6 @@ static const CGFloat kMDCBottomAppBarViewFloatingButtonElevationSecondary = 4;
   if (animated) {
     CABasicAnimation *animation =
         [CABasicAnimation animationWithKeyPath:kMDCBottomAppBarViewPositionString];
-    animation.timingFunction =
-        [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
     animation.duration = kMDCFloatingButtonExitDuration;
     animation.fromValue = [NSValue valueWithCGPoint:self.floatingButton.center];
     animation.toValue = [NSValue valueWithCGPoint:endPoint];
@@ -354,11 +346,17 @@ static const CGFloat kMDCBottomAppBarViewFloatingButtonElevationSecondary = 4;
     elevation = kMDCBottomAppBarViewFloatingButtonElevationSecondary;
     subViewIndex = 0;
   }
-  // Immediately move the button to the correct z-ordering so that the shadow clipping effect isn't
-  // as apparent. If we did this at the end of the animation, then the shadow would appear to
-  // suddenly clip at the end of the animation.
-  [self insertSubview:_floatingButton atIndex:subViewIndex];
-  [_floatingButton setElevation:elevation forState:UIControlStateNormal];
+  if (animated) {
+    [_floatingButton setElevation:1 forState:UIControlStateNormal];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, kMDCButtonAnimationDuration * NSEC_PER_MSEC),
+                   dispatch_get_main_queue(), ^{
+                     [self insertSubview:self.floatingButton atIndex:subViewIndex];
+                     [self.floatingButton setElevation:elevation forState:UIControlStateNormal];
+                   });
+  } else {
+    [self insertSubview:_floatingButton atIndex:subViewIndex];
+    [_floatingButton setElevation:elevation forState:UIControlStateNormal];
+  }
 }
 
 - (void)setFloatingButtonPosition:(MDCBottomAppBarFloatingButtonPosition)floatingButtonPosition {

@@ -18,11 +18,6 @@
 
 static const NSTimeInterval MDCBottomSheetTransitionDuration = 0.25;
 
-@interface MDCBottomSheetTransitionController ()
-@property(nonatomic, weak, nullable)
-    MDCBottomSheetPresentationController *currentPresentationController;
-@end
-
 @implementation MDCBottomSheetTransitionController {
  @protected
   UIColor *_scrimColor;
@@ -62,7 +57,6 @@ static const NSTimeInterval MDCBottomSheetTransitionDuration = 0.25;
   presentationController.scrimAccessibilityHint = _scrimAccessibilityHint;
   presentationController.scrimAccessibilityLabel = _scrimAccessibilityLabel;
   presentationController.preferredSheetHeight = _preferredSheetHeight;
-  _currentPresentationController = presentationController;
   return presentationController;
 }
 
@@ -163,7 +157,6 @@ static const NSTimeInterval MDCBottomSheetTransitionDuration = 0.25;
 
 - (void)setScrimColor:(UIColor *)scrimColor {
   _scrimColor = scrimColor;
-  _currentPresentationController.scrimColor = scrimColor;
 }
 
 - (UIColor *)scrimColor {
@@ -172,7 +165,6 @@ static const NSTimeInterval MDCBottomSheetTransitionDuration = 0.25;
 
 - (void)setIsScrimAccessibilityElement:(BOOL)isScrimAccessibilityElement {
   _isScrimAccessibilityElement = isScrimAccessibilityElement;
-  _currentPresentationController.isScrimAccessibilityElement = isScrimAccessibilityElement;
 }
 
 - (BOOL)isScrimAccessibilityElement {
@@ -181,7 +173,6 @@ static const NSTimeInterval MDCBottomSheetTransitionDuration = 0.25;
 
 - (void)setScrimAccessibilityLabel:(NSString *)scrimAccessibilityLabel {
   _scrimAccessibilityLabel = scrimAccessibilityLabel;
-  _currentPresentationController.scrimAccessibilityLabel = scrimAccessibilityLabel;
 }
 
 - (NSString *)scrimAccessibilityLabel {
@@ -190,7 +181,6 @@ static const NSTimeInterval MDCBottomSheetTransitionDuration = 0.25;
 
 - (void)setScrimAccessibilityHint:(NSString *)scrimAccessibilityHint {
   _scrimAccessibilityHint = scrimAccessibilityHint;
-  _currentPresentationController.scrimAccessibilityHint = scrimAccessibilityHint;
 }
 
 - (NSString *)scrimAccessibilityHint {
@@ -199,7 +189,6 @@ static const NSTimeInterval MDCBottomSheetTransitionDuration = 0.25;
 
 - (void)setScrimAccessibilityTraits:(UIAccessibilityTraits)scrimAccessibilityTraits {
   _scrimAccessibilityTraits = scrimAccessibilityTraits;
-  _currentPresentationController.scrimAccessibilityTraits = scrimAccessibilityTraits;
 }
 
 - (UIAccessibilityTraits)scrimAccessibilityTraits {

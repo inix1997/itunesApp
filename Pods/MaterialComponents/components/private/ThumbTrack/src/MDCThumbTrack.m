@@ -36,9 +36,8 @@ static const CGFloat kDefaultFilledTrackAnchorValue = -CGFLOAT_MAX;
 static const CGFloat kTrackOnAlpha = (CGFloat)0.5;
 static const CGFloat kMinTouchSize = 48;
 static const CGFloat kThumbSlopFactor = (CGFloat)3.5;
-static const CGFloat kValueLabelMinHeight = 48.0f;
-static const CGFloat kValueLabelAspectRatio = 0.81f;
-static const CGFloat kValueLabelThumbPadding = 4.0f;
+static const CGFloat kValueLabelHeight = 48;
+static const CGFloat kValueLabelWidth = (CGFloat)0.81 * kValueLabelHeight;
 
 static UIColor *ValueLabelTextColorDefault() {
   return UIColor.whiteColor;
@@ -76,7 +75,7 @@ static UIFont *ValueLabelFontDefault() {
  @return Absolute straight line distance.
  */
 static inline CGFloat DistanceFromPointToPoint(CGPoint point1, CGPoint point2) {
-  return hypot(point1.x - point2.x, point1.y - point2.y);
+  return MDCHypot(point1.x - point2.x, point1.y - point2.y);
 }
 
 #if MDC_AVAILABLE_SDK_IOS(10_0)
@@ -87,11 +86,7 @@ static inline CGFloat DistanceFromPointToPoint(CGPoint point1, CGPoint point2) {
 @interface MDCThumbTrack () <MDCInkTouchControllerDelegate>
 @property(nonatomic, strong, nullable) UIColor *primaryColor;
 @property(nonatomic, strong, nullable) MDCRippleView *rippleView;
-@property(nonatomic, nonnull, readonly) UIPanGestureRecognizer *dummyPanRecognizer;
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 @property(nonatomic, strong, nullable) MDCInkTouchController *touchController;
-#pragma clang diagnostic pop
 @end
 
 @implementation MDCThumbTrack {
@@ -104,6 +99,8 @@ static inline CGFloat DistanceFromPointToPoint(CGPoint point1, CGPoint point2) {
   BOOL _shouldDisplayInk;
   BOOL _shouldDisplayRipple;
   MDCNumericValueLabel *_valueLabel;
+  UIPanGestureRecognizer *_dummyPanRecognizer;
+  CGFloat _valueLabelHeight;
 
   // Attributes to handle interaction. To associate touches to previous touches, we keep a reference
   // to the current touch, since the system reuses the same memory address when sending subsequent
@@ -138,6 +135,7 @@ static inline CGFloat DistanceFromPointToPoint(CGPoint point1, CGPoint point2) {
     _filledTrackAnchorValue = kDefaultFilledTrackAnchorValue;
     _shouldDisplayInk = YES;
     _shouldDisplayRipple = YES;
+    _valueLabelHeight = kValueLabelHeight;
     _discreteDotVisibility = MDCThumbDiscreteDotVisibilityNever;
     _discrete = YES;
 
@@ -164,10 +162,7 @@ static inline CGFloat DistanceFromPointToPoint(CGPoint point1, CGPoint point2) {
     [self addSubview:_trackView];
 
     // Set up ink layer.
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     _touchController = [[MDCInkTouchController alloc] initWithView:_thumbView];
-#pragma clang diagnostic pop
     _touchController.delegate = self;
     [_touchController addInkView];
     _touchController.defaultInkView.inkStyle = MDCInkStyleUnbounded;
@@ -369,8 +364,7 @@ static inline CGFloat DistanceFromPointToPoint(CGPoint point1, CGPoint point2) {
 
   if (shouldDisplayDiscreteValueLabel) {
     _valueLabel = [[MDCNumericValueLabel alloc]
-        initWithFrame:CGRectMake(0, 0, kValueLabelMinHeight * kValueLabelAspectRatio,
-                                 kValueLabelMinHeight)];
+        initWithFrame:CGRectMake(0, 0, kValueLabelWidth, _valueLabelHeight)];
     // Effectively 0, but setting it to 0 results in animation not happening
     _valueLabel.transform = CGAffineTransformMakeScale((CGFloat)0.001, (CGFloat)0.001);
     [self addSubview:_valueLabel];
@@ -580,13 +574,10 @@ static inline CGFloat DistanceFromPointToPoint(CGPoint point1, CGPoint point2) {
 
 #pragma mark - MDCInkTouchControllerDelegate
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 - (BOOL)inkTouchController:(nonnull __unused MDCInkTouchController *)inkTouchController
     shouldProcessInkTouchesAtTouchLocation:(__unused CGPoint)location {
   return _shouldDisplayInk;
 }
-#pragma clang diagnostic pop
 
 #pragma mark - Animation helpers
 
@@ -638,8 +629,8 @@ static inline CGFloat DistanceFromPointToPoint(CGPoint point1, CGPoint point2) {
                       completion:(void (^)(void))completion {
   [self updateViewsNoAnimation];
 
-  BOOL activeSegmentShrinking = fabs(self.value - self.filledTrackAnchorValue) <
-                                fabs(previousValue - self.filledTrackAnchorValue);
+  BOOL activeSegmentShrinking = MDCFabs(self.value - self.filledTrackAnchorValue) <
+                                MDCFabs(previousValue - self.filledTrackAnchorValue);
 
   UIViewAnimationOptions baseAnimationOptions =
       UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionAllowUserInteraction;
@@ -670,8 +661,8 @@ static inline CGFloat DistanceFromPointToPoint(CGPoint point1, CGPoint point2) {
         (_value < _filledTrackAnchorValue && _filledTrackAnchorValue < previousValue);
     if (crossesAnchor) {
       CGFloat currentValue = _value;
-      CGFloat animationDurationToAnchor = (fabs(previousValue - _filledTrackAnchorValue) /
-                                           fabs(previousValue - currentValue)) *
+      CGFloat animationDurationToAnchor = (MDCFabs(previousValue - _filledTrackAnchorValue) /
+                                           MDCFabs(previousValue - currentValue)) *
                                           kAnimationDuration;
       void (^afterCrossingAnchorAnimation)(BOOL) = ^void(__unused BOOL finished) {
         UIViewAnimationOptions options = baseAnimationOptions | UIViewAnimationOptionCurveEaseOut;
@@ -785,7 +776,7 @@ static inline CGFloat DistanceFromPointToPoint(CGPoint point1, CGPoint point2) {
         (self.filledTrackAnchorValue - self.minimumValue) / (self.maximumValue - self.minimumValue);
     CGFloat relativeValuePoint =
         (self.value - self.minimumValue) / (self.maximumValue - self.minimumValue);
-    CGFloat activeSegmentWidth = fabs(relativeAnchorPoint - relativeValuePoint);
+    CGFloat activeSegmentWidth = MDCFabs(relativeAnchorPoint - relativeValuePoint);
     CGFloat activeSegmentOriginX = MIN(relativeAnchorPoint, relativeValuePoint);
     _discreteDots.activeDotsSegment = CGRectMake(activeSegmentOriginX, 0, activeSegmentWidth, 0);
   }
@@ -816,23 +807,30 @@ static inline CGFloat DistanceFromPointToPoint(CGPoint point1, CGPoint point2) {
 
   // Make sure Numeric Value Label matches up
   if (_shouldDisplayDiscreteValueLabel && _discrete && _numDiscreteValues > 1) {
+    // Note that "center" here doesn't refer to the actual center, but rather the anchor point,
+    // which is re-defined to be slightly below the bottom of the label
+    _valueLabel.center = [self numericValueLabelPositionForValue:_value];
     _valueLabel.backgroundColor = self.valueLabelBackgroundColor;
     _valueLabel.textColor = self.valueLabelTextColor;
     if ([_delegate respondsToSelector:@selector(thumbTrack:stringForValue:)]) {
       _valueLabel.text = [_delegate thumbTrack:self stringForValue:_value];
-      CGFloat labelHeight = CGRectGetHeight(_valueLabel.frame);
-      CGFloat labelWidth = CGRectGetWidth(_valueLabel.frame);
-      if (CGAffineTransformIsIdentity(_valueLabel.transform)) {
-        labelHeight = MAX(kValueLabelMinHeight, ceil(_valueLabel.font.lineHeight));
-        labelWidth = MAX(kValueLabelAspectRatio * labelHeight,
-                         [_valueLabel sizeThatFits:CGSizeMake(CGFLOAT_MAX, labelHeight)].height);
+      if (CGRectGetWidth(_valueLabel.frame) > 1) {
+        CGFloat scale = self.window.screen.scale > 0 ?: UIScreen.mainScreen.scale;
+        _valueLabelHeight =
+            MAX(kValueLabelHeight, MDCCeil(_valueLabel.font.lineHeight * scale) / scale);
+        CGFloat valueLabelWidth =
+            MAX((CGFloat)0.81 * _valueLabelHeight,
+                [_valueLabel sizeThatFits:CGSizeMake(CGFLOAT_MAX, _valueLabelHeight)].height);
+        // Reset the size prior to pixel alignement since previous alignement likely increased it
+        CGRect valueLabelFrame = CGRectMake(_valueLabel.frame.origin.x, _valueLabel.frame.origin.y,
+                                            valueLabelWidth, _valueLabelHeight);
+        // TODO(https://github.com/material-components/material-components-ios/issues/3326 ):
+        //   Don't assign the frame AND the center (above). Do it only once to avoid extra layout
+        //   passes. This is the cause of the visual glitch seen when coloring the "active" tick
+        //   marks in the _discreteDots view.
+        _valueLabel.frame = MDCRectAlignToScale(valueLabelFrame, [UIScreen mainScreen].scale);
+        _valueLabel.center = [self numericValueLabelPositionForValue:_value];
       }
-      CGRect labelFrame =
-          [self determineVisibleValueLabelFrameWithSize:CGSizeMake(labelWidth, labelHeight)];
-      _valueLabel.frame = labelFrame;
-      _valueLabel.center =
-          [self determineValueLabelCenterWithVisibleFrame:labelFrame
-                                              anchorPoint:_valueLabel.layer.anchorPoint];
     }
   }
 
@@ -859,7 +857,7 @@ static inline CGFloat DistanceFromPointToPoint(CGPoint point1, CGPoint point2) {
                                        timingFunctionFromUIViewAnimationOptions:animationOptions]];
     [CATransaction setAnimationDuration:duration];
     _trackOnLayer.frame =
-        CGRectMake(trackOnXValue, 0, fabs(currentXValue - anchorXValue), _trackHeight);
+        CGRectMake(trackOnXValue, 0, MDCFabs(currentXValue - anchorXValue), _trackHeight);
     [CATransaction commit];
   } else {
     // Set background colors for disabled state.
@@ -909,7 +907,19 @@ static inline CGFloat DistanceFromPointToPoint(CGPoint point1, CGPoint point2) {
     _thumbView.borderColor = _trackOffColor;
   }
 
-  if (_thumbRadius == _thumbView.cornerRadius) {
+  CGFloat radius;
+  if (_isDraggingThumb) {
+    if (!_shouldDisplayThumbWithDiscreteValueLabel && _discrete &&
+        _shouldDisplayDiscreteValueLabel && _numDiscreteValues > 1) {
+      radius = 0;
+    } else {
+      radius = _thumbRadius + _trackHeight;
+    }
+  } else {
+    radius = _thumbRadius;
+  }
+
+  if (radius == _thumbView.cornerRadius || !_thumbGrowsWhenDragging) {
     // No need to change anything
     return;
   }
@@ -919,13 +929,13 @@ static inline CGFloat DistanceFromPointToPoint(CGPoint point1, CGPoint point2) {
     anim.timingFunction =
         [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
     anim.fromValue = [NSNumber numberWithDouble:_thumbView.cornerRadius];
-    anim.toValue = [NSNumber numberWithDouble:_thumbRadius];
+    anim.toValue = [NSNumber numberWithDouble:radius];
     anim.duration = duration;
     anim.delegate = self;
     anim.removedOnCompletion = NO;  // We'll remove it ourselves as the delegate
     [_thumbView.layer addAnimation:anim forKey:anim.keyPath];
   }
-  [self setDisplayThumbRadius:_thumbRadius];  // Updates frame and corner radius
+  [self setDisplayThumbRadius:radius];  // Updates frame and corner radius
 
   [self updateTrackMask];
 }
@@ -994,23 +1004,20 @@ static inline CGFloat DistanceFromPointToPoint(CGPoint point1, CGPoint point2) {
   return CGPointMake(_thumbRadius + self.thumbPanRange * relValue, self.frame.size.height / 2);
 }
 
-- (CGRect)determineVisibleValueLabelFrameWithSize:(CGSize)size {
-  CGFloat relValue = [self relativeValueForValue:_value];
+/**
+ Gives the point on the thumb track that we should set as the "center" of the numeric value label.
+ Keep in mind that this doesn't actually correspond to the geometric center of the label, but rather
+ the anchor point which falls to the bottom of the label. So by setting this point to be on the
+ track we automatically get the property of the numeric value label hovering slightly above the
+ track.
+ */
+- (CGPoint)numericValueLabelPositionForValue:(CGFloat)value {
+  CGFloat relValue = [self relativeValueForValue:value];
 
   // To account for the discrete dots on the left and right sides
   CGFloat range = self.thumbPanRange - _trackHeight;
-  CGFloat centerX = _thumbRadius + (_trackHeight / 2) + range * relValue;
-  CGFloat minX = centerX - (0.5f * size.width);
-  CGFloat maxY = CGRectGetMidY(self.frame) - _thumbRadius - kValueLabelThumbPadding;
-  CGFloat minY = maxY - size.height;
-  return CGRectMake(minX, minY, size.width, size.height);
-}
-
-- (CGPoint)determineValueLabelCenterWithVisibleFrame:(CGRect)visibleFrame
-                                         anchorPoint:(CGPoint)anchorPoint {
-  CGFloat centerX = CGRectGetMinX(visibleFrame) + (anchorPoint.x * CGRectGetWidth(visibleFrame));
-  CGFloat centerY = CGRectGetMinY(visibleFrame) + (anchorPoint.y * CGRectGetHeight(visibleFrame));
-  return CGPointMake(centerX, centerY);
+  return CGPointMake(_thumbRadius + (_trackHeight / 2) + range * relValue,
+                     self.frame.size.height / 2);
 }
 
 - (CGFloat)valueForThumbPosition:(CGPoint)position {
@@ -1059,7 +1066,7 @@ static inline CGFloat DistanceFromPointToPoint(CGPoint point1, CGPoint point2) {
   if (MDCCGFloatEqual(_minimumValue, _maximumValue)) {
     return _minimumValue;
   }
-  CGFloat relValue = (value - _minimumValue) / fabs(_minimumValue - _maximumValue);
+  CGFloat relValue = (value - _minimumValue) / MDCFabs(_minimumValue - _maximumValue);
   // For RTL we invert the value
   if (self.mdf_effectiveUserInterfaceLayoutDirection == UIUserInterfaceLayoutDirectionRightToLeft) {
     relValue = 1 - relValue;
@@ -1077,7 +1084,7 @@ static inline CGFloat DistanceFromPointToPoint(CGPoint point1, CGPoint point2) {
 
   CGFloat scaledTargetValue = (targetValue - _minimumValue) / (_maximumValue - _minimumValue);
   CGFloat snappedValue =
-      round((_numDiscreteValues - 1) * scaledTargetValue) / (_numDiscreteValues - 1);
+      MDCRound((_numDiscreteValues - 1) * scaledTargetValue) / (_numDiscreteValues - 1);
   return (1 - snappedValue) * _minimumValue + snappedValue * _maximumValue;
 }
 

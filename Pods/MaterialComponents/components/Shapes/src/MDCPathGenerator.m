@@ -14,6 +14,7 @@
 
 #import "MDCPathGenerator.h"
 
+#import "MaterialMath.h"
 
 @interface MDCPathCommand : NSObject
 - (void)applyToCGPath:(CGMutablePathRef)cgPath transform:(CGAffineTransform *)transform;
@@ -94,7 +95,7 @@
   [_operations addObject:op];
 
   _endPoint =
-      CGPointMake(center.x + radius * cos(endAngle), center.y + radius * sin(endAngle));
+      CGPointMake(center.x + radius * MDCCos(endAngle), center.y + radius * MDCSin(endAngle));
 }
 
 - (void)addArcWithTangentPoint:(CGPoint)tangentPoint

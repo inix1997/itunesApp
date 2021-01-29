@@ -25,7 +25,7 @@
 @interface MDCTabBarTypographyThemer : NSObject
 @end
 
-@interface MDCTabBarTypographyThemer (Deprecated)
+@interface MDCTabBarTypographyThemer (ToBeDeprecated)
 
 /**
  Applies a typography scheme's properties to an MDCTabBar.
@@ -38,7 +38,6 @@
  Learn more at docs/theming.md#migration-guide-themers-to-theming-extensions
  */
 + (void)applyTypographyScheme:(nonnull id<MDCTypographyScheming>)typographyScheme
-                     toTabBar:(nonnull MDCTabBar *)tabBar
-    __deprecated_msg("Use MDCTabBar's applyPrimaryThemeWithScheme instead.");
+                     toTabBar:(nonnull MDCTabBar *)tabBar;
 
 @end

@@ -27,7 +27,7 @@
 @interface MDCNavigationBarTypographyThemer : NSObject
 @end
 
-@interface MDCNavigationBarTypographyThemer (Deprecated)
+@interface MDCNavigationBarTypographyThemer (ToBeDeprecated)
 
 /**
  Applies a typography scheme's properties to an MDCNavigationBar.
@@ -40,7 +40,6 @@
  Learn more at docs/theming.md#migration-guide-themers-to-theming-extensions
  */
 + (void)applyTypographyScheme:(nonnull id<MDCTypographyScheming>)typographyScheme
-              toNavigationBar:(nonnull MDCNavigationBar *)navigationBar
-    __deprecated_msg("Customize your MDCNavigationBar using its styling APIs directly.");
+              toNavigationBar:(nonnull MDCNavigationBar *)navigationBar;
 
 @end

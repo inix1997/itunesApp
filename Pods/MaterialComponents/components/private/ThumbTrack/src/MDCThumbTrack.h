@@ -176,6 +176,9 @@ typedef NS_ENUM(NSUInteger, MDCThumbDiscreteDotVisibility) {
  */
 @property(nonatomic, assign) BOOL thumbIsHollowAtStart;
 
+/** Whether or not the thumb should grow when the user is dragging it. Default is NO. */
+@property(nonatomic, assign) BOOL thumbGrowsWhenDragging;
+
 /** The max radius of the ripple when the user touches the thumb. */
 @property(nonatomic, assign) CGFloat thumbRippleMaximumRadius;
 
@@ -322,18 +325,13 @@ typedef NS_ENUM(NSUInteger, MDCThumbDiscreteDotVisibility) {
  */
 @property(nullable, nonatomic, strong) UIColor *primaryColor;
 
-@end
-
-@interface MDCThumbTrack (Deprecated)
-
 /**
  The color of the Ink ripple.
  @warning This method will eventually be deprecated. Opt-in to Ripple by setting
  enableRippleBehavior to YES, and then use rippleColor instead. Learn more at
  https://github.com/material-components/material-components-ios/tree/develop/components/Ink#migration-guide-ink-to-ripple
  */
-@property(nullable, nonatomic, strong) UIColor *inkColor __deprecated_msg(
-    "Set enableRippleBehavior to YES and use rippleColor instead.");
+@property(nullable, nonatomic, strong) UIColor *inkColor;
 
 /**
  Whether the thumb should display ink splashes on touch.
@@ -341,8 +339,7 @@ typedef NS_ENUM(NSUInteger, MDCThumbDiscreteDotVisibility) {
  enableRippleBehavior to YES, and then use shouldDisplayRipple instead. Learn more at
  https://github.com/material-components/material-components-ios/tree/develop/components/Ink#migration-guide-ink-to-ripple
  */
-@property(nonatomic, assign) BOOL shouldDisplayInk __deprecated_msg(
-    "Set enableRippleBehavior to YES and use shouldDisplayRipple instead.");
+@property(nonatomic, assign) BOOL shouldDisplayInk;
 
 @end
 

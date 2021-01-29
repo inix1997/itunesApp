@@ -156,10 +156,10 @@ static CGFloat _underlineHeightNormalDefault =
  The vertical layout is, at most complex (floating), this form:
  MDCTextInputControllerFilledHalfPadding +                            // Small padding
  MDCTextInputControllerFilledHalfPaddingAddition                      // Additional point (iOS specific)
- rint(self.textInput.placeholderLabel.font.lineHeight * scale)     // Placeholder when up
+ MDCRint(self.textInput.placeholderLabel.font.lineHeight * scale)     // Placeholder when up
  MDCTextInputControllerFilledHalfPadding +                            // Small padding
  MDCTextInputControllerFilledHalfPaddingAddition                      // Additional point (iOS specific)
-   ceil(MAX(self.textInput.font.lineHeight,                        // Text field or placeholder line height
+   MDCCeil(MAX(self.textInput.font.lineHeight,                        // Text field or placeholder line height
              self.textInput.placeholderLabel.font.lineHeight))
  MDCTextInputControllerFilledHalfPadding +                            // Small padding
  MDCTextInputControllerFilledHalfPaddingAddition                      // Additional point (iOS specific)
@@ -175,8 +175,8 @@ static CGFloat _underlineHeightNormalDefault =
   if (self.isFloatingEnabled) {
     textInsets.top =
         MDCTextInputControllerFilledHalfPadding + MDCTextInputControllerFilledHalfPaddingAddition +
-        rint(self.textInput.placeholderLabel.font.lineHeight *
-             (CGFloat)self.floatingPlaceholderScale.floatValue) +
+        MDCRint(self.textInput.placeholderLabel.font.lineHeight *
+                (CGFloat)self.floatingPlaceholderScale.floatValue) +
         MDCTextInputControllerFilledHalfPadding + MDCTextInputControllerFilledHalfPaddingAddition;
   } else {
     textInsets.top = MDCTextInputControllerFilledNormalPlaceholderPadding;
@@ -272,7 +272,7 @@ static CGFloat _underlineHeightNormalDefault =
 
   CGFloat scale = UIScreen.mainScreen.scale;
   CGFloat leadingOffset =
-      ceil(self.textInput.leadingUnderlineLabel.font.lineHeight * scale) / scale;
+      MDCCeil(self.textInput.leadingUnderlineLabel.font.lineHeight * scale) / scale;
   leadingOffset =
       MAX(leadingOffset,
           [MDCTextInputControllerBase
@@ -282,7 +282,7 @@ static CGFloat _underlineHeightNormalDefault =
                                            widthHint:widthHint] *
               leadingOffset);
   CGFloat trailingOffset =
-      ceil(self.textInput.trailingUnderlineLabel.font.lineHeight * scale) / scale;
+      MDCCeil(self.textInput.trailingUnderlineLabel.font.lineHeight * scale) / scale;
 
   CGFloat underlineOffset = 0;
   switch (self.textInput.textInsetsMode) {
@@ -313,7 +313,7 @@ static CGFloat _underlineHeightNormalDefault =
 
 - (CGFloat)estimatedTextHeight {
   CGFloat scale = UIScreen.mainScreen.scale;
-  CGFloat estimatedTextHeight = ceil(self.textInput.font.lineHeight * scale) / scale;
+  CGFloat estimatedTextHeight = MDCCeil(self.textInput.font.lineHeight * scale) / scale;
 
   return estimatedTextHeight;
 }

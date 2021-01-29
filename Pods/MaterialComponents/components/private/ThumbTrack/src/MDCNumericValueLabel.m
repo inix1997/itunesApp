@@ -14,7 +14,9 @@
 
 #import "MDCNumericValueLabel.h"
 
-static const CGFloat kAnchorPointY = (CGFloat)1.0;
+#import "MaterialTypography.h"
+
+static const CGFloat kAnchorPointY = (CGFloat)1.15;
 static const CGFloat kBezierSmoothingFactor = (CGFloat)0.0625;
 static const CGFloat kLabelInsetSize = 6;
 
@@ -130,6 +132,10 @@ static const CGFloat kLabelInsetSize = 6;
 
 - (CGFloat)fontSize {
   return _label.font.pointSize;
+}
+
+- (void)setFontSize:(CGFloat)fontSize {
+  _label.font = [[MDCTypography fontLoader] regularFontOfSize:fontSize];
 }
 
 - (NSString *)text {

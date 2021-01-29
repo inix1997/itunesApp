@@ -21,7 +21,7 @@
 #include "MaterialAvailability.h"
 #import "UIBezierPath+MDCTextControlStyle.h"
 
-static const CGFloat kDefaultFilledStyleTopCornerRadius = (CGFloat)4.0;
+static const CGFloat kFilledContainerStyleTopCornerRadius = (CGFloat)4.0;
 
 @interface MDCTextControlStyleFilled () <CAAnimationDelegate>
 
@@ -45,7 +45,6 @@ static const CGFloat kDefaultFilledStyleTopCornerRadius = (CGFloat)4.0;
 #pragma mark Setup
 
 - (void)commonMDCTextControlStyleFilledInit {
-  self.topCornerRadius = kDefaultFilledStyleTopCornerRadius;
   [self setUpFilledBackgroundColors];
   [self setUpFilledBackgroundSublayer];
 }
@@ -129,10 +128,8 @@ static const CGFloat kDefaultFilledStyleTopCornerRadius = (CGFloat)4.0;
              animationDuration:(NSTimeInterval)animationDuration {
   self.filledSublayer.fillColor = [self.filledBackgroundColors[@(state)] CGColor];
   CGFloat containerHeight = CGRectGetMaxY(containerFrame);
-  UIBezierPath *filledSublayerBezier =
-      [self filledSublayerPathWithTextFieldBounds:view.bounds
-                                  containerHeight:containerHeight
-                                  topCornerRadius:self.topCornerRadius];
+  UIBezierPath *filledSublayerBezier = [self filledSublayerPathWithTextFieldBounds:view.bounds
+                                                                   containerHeight:containerHeight];
   self.filledSublayer.path = filledSublayerBezier.CGPath;
   if (self.filledSublayer.superlayer != view.layer) {
     [view.layer insertSublayer:self.filledSublayer atIndex:0];
@@ -142,9 +139,9 @@ static const CGFloat kDefaultFilledStyleTopCornerRadius = (CGFloat)4.0;
 #pragma mark Path Drawing
 
 - (UIBezierPath *)filledSublayerPathWithTextFieldBounds:(CGRect)viewBounds
-                                        containerHeight:(CGFloat)containerHeight
-                                        topCornerRadius:(CGFloat)topRadius {
+                                        containerHeight:(CGFloat)containerHeight {
   UIBezierPath *path = [[UIBezierPath alloc] init];
+  CGFloat topRadius = kFilledContainerStyleTopCornerRadius;
   CGFloat bottomRadius = 0;
   CGFloat textFieldWidth = CGRectGetWidth(viewBounds);
   CGFloat sublayerMinY = 0;
@@ -183,5 +180,6 @@ static const CGFloat kDefaultFilledStyleTopCornerRadius = (CGFloat)4.0;
 
   return path;
 }
+
 
 @end

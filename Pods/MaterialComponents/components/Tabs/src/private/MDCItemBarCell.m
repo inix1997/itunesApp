@@ -18,6 +18,7 @@
 #import <MDFInternationalization/MDFInternationalization.h>
 
 #import "MDCItemBarBadge.h"
+#import "MDCItemBarStringConstants.h"
 #import "MDCItemBarStyle.h"
 #import "MaterialAnimationTiming.h"
 #import "MaterialInk.h"
@@ -55,10 +56,7 @@ static const NSTimeInterval kSelectionAnimationDuration = 0.3;
 
 @property(nonatomic, strong) UIImageView *imageView;
 @property(nonatomic, strong) MDCItemBarBadge *badge;
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 @property(nonatomic, strong) MDCInkTouchController *inkTouchController;
-#pragma clang diagnostic pop
 
 @property(nonatomic, strong) MDCItemBarStyle *style;
 
@@ -84,10 +82,7 @@ static const NSTimeInterval kSelectionAnimationDuration = 0.3;
     [self updateSubviews];
 
     // Set up ink controller to splash ink on taps.
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     _inkTouchController = [[MDCInkTouchController alloc] initWithView:self];
-#pragma clang diagnostic pop
     [_inkTouchController addInkView];  // Ink should always be on top of other views
 
     _rippleTouchController = [[MDCRippleTouchController alloc] init];
@@ -382,6 +377,32 @@ static const NSTimeInterval kSelectionAnimationDuration = 0.3;
     [labelComponents addObject:_badgeValue];
   }
 
+  NSOperatingSystemVersion iOS10Version = {10, 0, 0};
+  NSProcessInfo *processInfo = [NSProcessInfo processInfo];
+  BOOL isBelowiOS10 = ![processInfo isOperatingSystemAtLeastVersion:iOS10Version];
+
+  // On iOS 10+, MDCTabBar will receive the UIAccessibilityTraitTabBar, so this logic is
+  // unnecessary.
+  if (isBelowiOS10) {
+    // Describe as "tab, X of Y"
+    NSString *tabLabel =
+        [[self class] localizedStringWithKey:kMDCItemBarStringKeyAccessibilityTabElementLabel];
+    if (tabLabel) {
+      [labelComponents addObject:tabLabel];
+    }
+
+    NSString *positionFormat =
+        [[self class] localizedStringWithKey:kMDCItemBarStringKeyAccessibilityTabPositionFormat];
+    if (positionFormat) {
+      if (_itemIndex != NSNotFound && _itemCount > 0) {
+        int position = (int)(_itemIndex + 1);
+        NSString *localizedPosition =
+            [NSString localizedStringWithFormat:positionFormat, position, (int)_itemCount];
+        [labelComponents addObject:localizedPosition];
+      }
+    }
+  }
+
   // Speak components with a pause in between.
   return [labelComponents componentsJoinedByString:@", "];
 }
@@ -566,10 +587,7 @@ static const NSTimeInterval kSelectionAnimationDuration = 0.3;
 }
 
 - (void)updateInk {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
   MDCInkView *inkView = _inkTouchController.defaultInkView;
-#pragma clang diagnostic pop
   inkView.inkColor = _style.inkColor;
   inkView.inkStyle = _style.inkStyle;
   inkView.usesLegacyInkRipple = NO;

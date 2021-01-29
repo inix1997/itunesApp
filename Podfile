@@ -11,6 +11,6 @@ pod 'SnapKit'
 pod 'MBProgressHUD', '~> 0.9.2'
 pod 'SwiftyGif'
 pod 'MaterialComponents'
-
+pod 'PMAlertController'
 target 'itunesApp' do
 end

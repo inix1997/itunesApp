@@ -14,7 +14,7 @@
 
 #import "MDCBaseTextFieldLayout.h"
 
-#import "MaterialTextControlsPrivate+Shared.h"
+#import "MaterialMath.h"
 
 @interface MDCBaseTextFieldLayout ()
 @end
@@ -35,10 +35,10 @@
                         labelPosition:(MDCTextControlLabelPosition)labelPosition
                         labelBehavior:(MDCTextControlLabelBehavior)labelBehavior
                     sideViewAlignment:(MDCTextControlTextFieldSideViewAlignment)sideViewAlignment
-                          leadingView:(UIView *)leadingView
-                      leadingViewMode:(UITextFieldViewMode)leadingViewMode
-                         trailingView:(UIView *)trailingView
-                     trailingViewMode:(UITextFieldViewMode)trailingViewMode
+                             leftView:(UIView *)leftView
+                         leftViewMode:(UITextFieldViewMode)leftViewMode
+                            rightView:(UIView *)rightView
+                        rightViewMode:(UITextFieldViewMode)rightViewMode
                 clearButtonSideLength:(CGFloat)clearButtonSideLength
                       clearButtonMode:(UITextFieldViewMode)clearButtonMode
                 leadingAssistiveLabel:(nonnull UILabel *)leadingAssistiveLabel
@@ -60,10 +60,10 @@
                              labelPosition:labelPosition
                              labelBehavior:labelBehavior
                          sideViewAlignment:sideViewAlignment
-                               leadingView:leadingView
-                           leadingViewMode:leadingViewMode
-                              trailingView:trailingView
-                          trailingViewMode:trailingViewMode
+                                  leftView:leftView
+                              leftViewMode:leftViewMode
+                                 rightView:rightView
+                             rightViewMode:rightViewMode
                      clearButtonSideLength:clearButtonSideLength
                            clearButtonMode:clearButtonMode
                      leadingAssistiveLabel:leadingAssistiveLabel
@@ -91,10 +91,10 @@
                            labelPosition:(MDCTextControlLabelPosition)labelPosition
                            labelBehavior:(MDCTextControlLabelBehavior)labelBehavior
                        sideViewAlignment:(MDCTextControlTextFieldSideViewAlignment)sideViewAlignment
-                             leadingView:(UIView *)leadingView
-                         leadingViewMode:(UITextFieldViewMode)leadingViewMode
-                            trailingView:(UIView *)trailingView
-                        trailingViewMode:(UITextFieldViewMode)trailingViewMode
+                                leftView:(UIView *)leftView
+                            leftViewMode:(UITextFieldViewMode)leftViewMode
+                               rightView:(UIView *)rightView
+                           rightViewMode:(UITextFieldViewMode)rightViewMode
                    clearButtonSideLength:(CGFloat)clearButtonSideLength
                          clearButtonMode:(UITextFieldViewMode)clearButtonMode
                    leadingAssistiveLabel:(nonnull UILabel *)leadingAssistiveLabel
@@ -104,15 +104,12 @@
         customAssistiveLabelDrawPriority:(CGFloat)customAssistiveLabelDrawPriority
                                    isRTL:(BOOL)isRTL
                                isEditing:(BOOL)isEditing {
-  UIView *leftView = isRTL ? trailingView : leadingView;
-  UIView *rightView = isRTL ? leadingView : trailingView;
-  UITextFieldViewMode leftViewMode = isRTL ? trailingViewMode : leadingViewMode;
-  UITextFieldViewMode rightViewMode = isRTL ? leadingViewMode : trailingViewMode;
-
-  BOOL displaysLeftView =
-      MDCTextControlShouldDisplaySideViewWithSideView(leftView, leftViewMode, isEditing);
-  BOOL displaysRightView =
-      MDCTextControlShouldDisplaySideViewWithSideView(rightView, rightViewMode, isEditing);
+  BOOL displaysLeftView = [self displaysSideView:leftView
+                                        viewMode:leftViewMode
+                                       isEditing:isEditing];
+  BOOL displaysRightView = [self displaysSideView:rightView
+                                         viewMode:rightViewMode
+                                        isEditing:isEditing];
   BOOL displaysClearButton = [self shouldDisplayClearButtonWithViewMode:clearButtonMode
                                                               isEditing:isEditing
                                                                    text:text];
@@ -258,15 +255,15 @@
                                  isRTL:isRTL];
   self.assistiveLabelViewFrame = CGRectMake(0, containerHeight, textFieldWidth,
                                             self.assistiveLabelViewLayout.calculatedHeight);
-  self.leadingViewFrame = isRTL ? rightViewFrame : leftViewFrame;
-  self.trailingViewFrame = isRTL ? leftViewFrame : rightViewFrame;
-  self.displaysLeadingView = isRTL ? displaysRightView : displaysLeftView;
-  self.displaysTrailingView = isRTL ? displaysLeftView : displaysRightView;
+  self.leftViewFrame = leftViewFrame;
+  self.rightViewFrame = rightViewFrame;
   self.clearButtonFrame = clearButtonFrame;
   self.textRectFloating = textRectFloating;
   self.textRectNormal = textRectNormal;
   self.labelFrameFloating = labelFrameFloating;
   self.labelFrameNormal = labelFrameNormal;
+  self.leftViewHidden = !displaysLeftView;
+  self.rightViewHidden = !displaysRightView;
   self.containerHeight = containerHeight;
 }
 
@@ -289,6 +286,31 @@
 
 - (CGFloat)minYForSubviewWithHeight:(CGFloat)height centerY:(CGFloat)centerY {
   return (CGFloat)round((double)(centerY - ((CGFloat)0.5 * height)));
+}
+
+- (BOOL)displaysSideView:(UIView *)subview
+                viewMode:(UITextFieldViewMode)viewMode
+               isEditing:(BOOL)isEditing {
+  BOOL displaysSideView = NO;
+  if (subview && !CGSizeEqualToSize(CGSizeZero, subview.frame.size)) {
+    switch (viewMode) {
+      case UITextFieldViewModeWhileEditing:
+        displaysSideView = isEditing;
+        break;
+      case UITextFieldViewModeUnlessEditing:
+        displaysSideView = !isEditing;
+        break;
+      case UITextFieldViewModeAlways:
+        displaysSideView = YES;
+        break;
+      case UITextFieldViewModeNever:
+        displaysSideView = NO;
+        break;
+      default:
+        break;
+    }
+  }
+  return displaysSideView;
 }
 
 - (BOOL)shouldDisplayClearButtonWithViewMode:(UITextFieldViewMode)viewMode
@@ -379,7 +401,7 @@
   if (assistiveLabelViewMaxY > maxY) {
     maxY = assistiveLabelViewMaxY;
   }
-  return ceil(maxY);
+  return MDCCeil(maxY);
 }
 
 - (CGRect)labelFrameWithLabelPosition:(MDCTextControlLabelPosition)labelPosition {

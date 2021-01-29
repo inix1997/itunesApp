@@ -16,9 +16,7 @@
 
 @class MDCTabBarViewController;
 
-__deprecated_msg(
-    "Use MDCTabBarView instead. See go/material-ios-tabbar-migration for more details.")
-    @protocol MDCTabBarControllerDelegate<NSObject>
+@protocol MDCTabBarControllerDelegate <NSObject>
 @optional
 
 /**

@@ -99,12 +99,14 @@ EOM
 if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_resource "${PODS_ROOT}/MaterialComponents/components/ActivityIndicator/src/MaterialActivityIndicator.bundle"
   install_resource "${PODS_ROOT}/MaterialComponents/components/AppBar/src/MaterialAppBar.bundle"
+  install_resource "${PODS_ROOT}/MaterialComponents/components/BottomNavigation/src/MaterialBottomNavigation.bundle"
   install_resource "${PODS_ROOT}/MaterialComponents/components/CollectionCells/src/MaterialCollectionCells.bundle"
   install_resource "${PODS_ROOT}/MaterialComponents/components/Collections/src/MaterialCollections.bundle"
   install_resource "${PODS_ROOT}/MaterialComponents/components/Dialogs/src/MaterialDialogs.bundle"
   install_resource "${PODS_ROOT}/MaterialComponents/components/PageControl/src/MaterialPageControl.bundle"
   install_resource "${PODS_ROOT}/MaterialComponents/components/ProgressView/src/MaterialProgressView.bundle"
   install_resource "${PODS_ROOT}/MaterialComponents/components/Snackbar/src/MaterialSnackbar.bundle"
+  install_resource "${PODS_ROOT}/MaterialComponents/components/Tabs/src/MaterialTabs.bundle"
   install_resource "${PODS_CONFIGURATION_BUILD_DIR}/MaterialComponents/MaterialIcons_ic_arrow_back.bundle"
   install_resource "${PODS_CONFIGURATION_BUILD_DIR}/MaterialComponents/MaterialIcons_ic_check.bundle"
   install_resource "${PODS_CONFIGURATION_BUILD_DIR}/MaterialComponents/MaterialIcons_ic_check_circle.bundle"
@@ -117,16 +119,19 @@ if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_resource "${PODS_CONFIGURATION_BUILD_DIR}/MaterialComponents/MaterialIcons_ic_radio_button_unchecked.bundle"
   install_resource "${PODS_CONFIGURATION_BUILD_DIR}/MaterialComponents/MaterialIcons_ic_reorder.bundle"
   install_resource "${PODS_CONFIGURATION_BUILD_DIR}/MaterialComponents/MaterialIcons_ic_settings.bundle"
+  install_resource "${PODS_CONFIGURATION_BUILD_DIR}/PMAlertController/PMAlertController.bundle"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
   install_resource "${PODS_ROOT}/MaterialComponents/components/ActivityIndicator/src/MaterialActivityIndicator.bundle"
   install_resource "${PODS_ROOT}/MaterialComponents/components/AppBar/src/MaterialAppBar.bundle"
+  install_resource "${PODS_ROOT}/MaterialComponents/components/BottomNavigation/src/MaterialBottomNavigation.bundle"
   install_resource "${PODS_ROOT}/MaterialComponents/components/CollectionCells/src/MaterialCollectionCells.bundle"
   install_resource "${PODS_ROOT}/MaterialComponents/components/Collections/src/MaterialCollections.bundle"
   install_resource "${PODS_ROOT}/MaterialComponents/components/Dialogs/src/MaterialDialogs.bundle"
   install_resource "${PODS_ROOT}/MaterialComponents/components/PageControl/src/MaterialPageControl.bundle"
   install_resource "${PODS_ROOT}/MaterialComponents/components/ProgressView/src/MaterialProgressView.bundle"
   install_resource "${PODS_ROOT}/MaterialComponents/components/Snackbar/src/MaterialSnackbar.bundle"
+  install_resource "${PODS_ROOT}/MaterialComponents/components/Tabs/src/MaterialTabs.bundle"
   install_resource "${PODS_CONFIGURATION_BUILD_DIR}/MaterialComponents/MaterialIcons_ic_arrow_back.bundle"
   install_resource "${PODS_CONFIGURATION_BUILD_DIR}/MaterialComponents/MaterialIcons_ic_check.bundle"
   install_resource "${PODS_CONFIGURATION_BUILD_DIR}/MaterialComponents/MaterialIcons_ic_check_circle.bundle"
@@ -139,6 +144,7 @@ if [[ "$CONFIGURATION" == "Release" ]]; then
   install_resource "${PODS_CONFIGURATION_BUILD_DIR}/MaterialComponents/MaterialIcons_ic_radio_button_unchecked.bundle"
   install_resource "${PODS_CONFIGURATION_BUILD_DIR}/MaterialComponents/MaterialIcons_ic_reorder.bundle"
   install_resource "${PODS_CONFIGURATION_BUILD_DIR}/MaterialComponents/MaterialIcons_ic_settings.bundle"
+  install_resource "${PODS_CONFIGURATION_BUILD_DIR}/PMAlertController/PMAlertController.bundle"
 fi
 
 mkdir -p "${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}"
@@ -152,7 +158,7 @@ rm -f "$RESOURCES_TO_COPY"
 if [[ -n "${WRAPPER_EXTENSION}" ]] && [ "`xcrun --find actool`" ] && [ -n "${XCASSET_FILES:-}" ]
 then
   # Find all other xcassets (this unfortunately includes those of path pods and other targets).
-  OTHER_XCASSETS=$(find -L "$PWD" -iname "*.xcassets" -type d)
+  OTHER_XCASSETS=$(find "$PWD" -iname "*.xcassets" -type d)
   while read line; do
     if [[ $line != "${PODS_ROOT}*" ]]; then
       XCASSET_FILES+=("$line")

@@ -19,9 +19,7 @@
  An additional delegate protocol for MDCTabBar that provides information about when UITabBarItems
  are about to be displayed and when they stop being displayed.
  */
-__deprecated_msg(
-    "Use MDCTabBarViewDelegate instead. See go/material-ios-tabbar-migration for more details.")
-    @protocol MDCTabBarDisplayDelegate
+@protocol MDCTabBarDisplayDelegate
 
 /**
  This method is called sometime before the tab's view is displayed.

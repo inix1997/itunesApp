@@ -55,6 +55,4 @@ public struct iTunesServiceModel: Codable {
         artworkUrl100 = try values.decodeIfPresent(String.self, forKey: .artworkUrl100)
         previewUrl = try values.decodeIfPresent(String.self, forKey: .previewUrl)
     }
-    
-
 }

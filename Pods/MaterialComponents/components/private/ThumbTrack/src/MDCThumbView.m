@@ -17,6 +17,7 @@
 #import "MaterialShadowElevations.h"
 #import "MaterialShapeLibrary.h"
 #import "MaterialShapes.h"
+#import "MaterialMath.h"
 
 @interface MDCThumbView ()
 
@@ -109,9 +110,9 @@
     CGFloat additionalRequiredHeight =
         MAX(0, CGRectGetHeight(self.bounds) - visibleAreaSize.height);
     CGFloat additionalRequiredWidth = MAX(0, CGRectGetWidth(self.bounds) - visibleAreaSize.width);
-    visibleAreaInsets.top = ceil(additionalRequiredHeight * 0.5f);
+    visibleAreaInsets.top = MDCCeil(additionalRequiredHeight * 0.5f);
     visibleAreaInsets.bottom = additionalRequiredHeight - visibleAreaInsets.top;
-    visibleAreaInsets.left = ceil(additionalRequiredWidth * 0.5f);
+    visibleAreaInsets.left = MDCCeil(additionalRequiredWidth * 0.5f);
     visibleAreaInsets.right = additionalRequiredWidth - visibleAreaInsets.left;
 
     self.shapeGenerator.topLeftCornerOffset =

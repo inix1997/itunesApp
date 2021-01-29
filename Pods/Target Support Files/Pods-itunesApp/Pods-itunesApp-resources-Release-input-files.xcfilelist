@@ -1,12 +1,14 @@
 ${PODS_ROOT}/Target Support Files/Pods-itunesApp/Pods-itunesApp-resources.sh
 ${PODS_ROOT}/MaterialComponents/components/ActivityIndicator/src/MaterialActivityIndicator.bundle
 ${PODS_ROOT}/MaterialComponents/components/AppBar/src/MaterialAppBar.bundle
+${PODS_ROOT}/MaterialComponents/components/BottomNavigation/src/MaterialBottomNavigation.bundle
 ${PODS_ROOT}/MaterialComponents/components/CollectionCells/src/MaterialCollectionCells.bundle
 ${PODS_ROOT}/MaterialComponents/components/Collections/src/MaterialCollections.bundle
 ${PODS_ROOT}/MaterialComponents/components/Dialogs/src/MaterialDialogs.bundle
 ${PODS_ROOT}/MaterialComponents/components/PageControl/src/MaterialPageControl.bundle
 ${PODS_ROOT}/MaterialComponents/components/ProgressView/src/MaterialProgressView.bundle
 ${PODS_ROOT}/MaterialComponents/components/Snackbar/src/MaterialSnackbar.bundle
+${PODS_ROOT}/MaterialComponents/components/Tabs/src/MaterialTabs.bundle
 ${PODS_CONFIGURATION_BUILD_DIR}/MaterialComponents/MaterialIcons_ic_arrow_back.bundle
 ${PODS_CONFIGURATION_BUILD_DIR}/MaterialComponents/MaterialIcons_ic_check.bundle
 ${PODS_CONFIGURATION_BUILD_DIR}/MaterialComponents/MaterialIcons_ic_check_circle.bundle
@@ -19,3 +21,4 @@ ${PODS_CONFIGURATION_BUILD_DIR}/MaterialComponents/MaterialIcons_ic_more_horiz.b
 ${PODS_CONFIGURATION_BUILD_DIR}/MaterialComponents/MaterialIcons_ic_radio_button_unchecked.bundle
 ${PODS_CONFIGURATION_BUILD_DIR}/MaterialComponents/MaterialIcons_ic_reorder.bundle
 ${PODS_CONFIGURATION_BUILD_DIR}/MaterialComponents/MaterialIcons_ic_settings.bundle
+${PODS_CONFIGURATION_BUILD_DIR}/PMAlertController/PMAlertController.bundle

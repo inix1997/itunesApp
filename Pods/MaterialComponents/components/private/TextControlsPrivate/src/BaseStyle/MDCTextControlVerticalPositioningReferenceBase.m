@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #import "MDCTextControlVerticalPositioningReferenceBase.h"
+#import "MaterialMath.h"
 #import "MDCTextControlVerticalPositioningReference.h"
 
 static const CGFloat kMinPaddingAroundTextWhenNoFloatingLabel = 6.0f;

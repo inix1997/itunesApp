@@ -22,10 +22,7 @@
 @interface MDCBaseCell ()
 
 @property(nonatomic, assign) CGPoint lastTouch;
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 @property(strong, nonatomic, nonnull) MDCInkView *inkView;
-#pragma clang diagnostic pop
 @property(strong, nonatomic, nonnull) MDCRippleView *rippleView;
 @property(strong, nonatomic, nonnull) UIColor *initialRippleViewRippleColor;
 
@@ -58,10 +55,7 @@
 
 - (void)commonMDCBaseCellInit {
   if (!self.inkView) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     self.inkView = [[MDCInkView alloc] initWithFrame:self.bounds];
-#pragma clang diagnostic pop
   }
   _inkView.usesLegacyInkRipple = NO;
   [self addSubview:_inkView];

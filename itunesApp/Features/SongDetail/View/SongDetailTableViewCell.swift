@@ -13,7 +13,8 @@ class SongDetailTableViewCell: UITableViewCell {
     var titleText = String()
     var subtitleText = String()
     var playButton = UIButton()
-        
+    let iconImageName = "play.fill"
+    
     override func awakeFromNib() {
         super.awakeFromNib()
     }
@@ -39,7 +40,7 @@ class SongDetailTableViewCell: UITableViewCell {
             make.top.equalTo(self.snp.top).offset(10)
             make.left.equalTo(self.snp.left)
         }
-        playButton.setImage(UIImage(systemName: "play.fill"), for: .normal)
+        playButton.setImage(UIImage(systemName: iconImageName), for: .normal)
     }
     
     required init?(coder aDecoder: NSCoder) {

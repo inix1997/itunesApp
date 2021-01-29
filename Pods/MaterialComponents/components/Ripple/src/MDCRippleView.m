@@ -17,6 +17,7 @@
 
 #import "MaterialAvailability.h"
 #import "MDCRippleViewDelegate.h"
+#import "MaterialMath.h"
 
 @interface MDCRippleView () <CALayerDelegate, MDCRippleLayerDelegate>
 

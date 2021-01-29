@@ -17,6 +17,7 @@
 #import "private/MDCInkLayer.h"
 #import "private/MDCLegacyInkLayer.h"
 #import "MDCInkViewDelegate.h"
+#import "MaterialMath.h"
 
 @interface MDCInkPendingAnimation : NSObject <CAAction>
 

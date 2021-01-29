@@ -222,7 +222,6 @@ NSString *const kMDCBottomDrawerScrollViewAccessibilityIdentifier =
     _elevation = MDCShadowElevationNavDrawer;
     _shadowedView = [[MDCBottomDrawerShadowedView alloc] init];
     _shouldAdjustOnContentSizeChange = NO;
-    _shouldDisplayMobileLandscapeFullscreen = YES;
   }
   return self;
 }
@@ -388,8 +387,7 @@ NSString *const kMDCBottomDrawerScrollViewAccessibilityIdentifier =
 }
 
 - (BOOL)shouldPresentFullScreen {
-  return [self isAccessibilityMode] || _shouldPresentAtFullscreen ||
-         (_shouldDisplayMobileLandscapeFullscreen && [self isMobileLandscape]);
+  return [self isAccessibilityMode] || [self isMobileLandscape] || _shouldPresentAtFullscreen;
 }
 
 - (BOOL)contentReachesFullscreen {
@@ -1075,7 +1073,7 @@ NSString *const kMDCBottomDrawerScrollViewAccessibilityIdentifier =
       // `updateContentOffsetForPerformantScrolling` method because the contentDiff
       // will not necessarily be 0 when there is no scrolling delta.
       // Therefore by rounding we are able to align to a reasonable content offset.
-      _contentHeaderTopInset = round(_contentHeaderTopInset);
+      _contentHeaderTopInset = MDCRound(_contentHeaderTopInset);
       // The minimum inset value should be the size of the safe area inset, as
       // kInitialDrawerHeightFactor discounts the safe area when receiving the height factor.
       // If we are using `maximumDrawerHeight` then we assume that the drawer does not go into the

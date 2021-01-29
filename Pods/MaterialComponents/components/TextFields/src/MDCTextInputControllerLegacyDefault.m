@@ -15,7 +15,6 @@
 #import "MDCTextInputControllerLegacyDefault.h"
 
 #import "MDCMultilineTextField.h"
-#import "MDCTextInput.h"
 #import "MDCTextInputUnderlineView.h"
 #import "private/MDCTextInputArt.h"
 
@@ -136,8 +135,8 @@ static CGFloat _underlineHeightNormalLegacyDefault =
   }
 
   textInsets.top = MDCTextInputControllerLegacyDefaultVerticalPadding +
-                   rint(self.textInput.placeholderLabel.font.lineHeight *
-                        (CGFloat)self.floatingPlaceholderScale.floatValue) +
+                   MDCRint(self.textInput.placeholderLabel.font.lineHeight *
+                           (CGFloat)self.floatingPlaceholderScale.floatValue) +
                    MDCTextInputControllerLegacyDefaultVerticalHalfPadding;
   return textInsets;
 }

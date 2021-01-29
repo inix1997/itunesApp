@@ -20,9 +20,14 @@ static const CGFloat kCornerRadius = 10;
 static const CGFloat kMargins = 10;
 
 static UIVisualEffectView *MDCInitializeCompatibleBlurView() {
-  UIBlurEffect *blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleProminent];
-  UIVisualEffectView *blurView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
-  return blurView;
+  if (@available(iOS 10, *)) {
+    UIBlurEffect *blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleProminent];
+    UIVisualEffectView *blurView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
+    return blurView;
+  }
+
+  UIBlurEffect *blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleLight];
+  return [[UIVisualEffectView alloc] initWithEffect:blurEffect];
 }
 
 @interface MDCBottomNavigationSystemDialogView ()

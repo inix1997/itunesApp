@@ -22,6 +22,7 @@
 #import "MDCTextInputUnderlineView.h"
 
 #import "MaterialAnimationTiming.h"
+#import "MaterialMath.h"
 #import "MaterialPalettes.h"
 #import "MaterialTypography.h"
 
@@ -910,7 +911,7 @@ static UIFont *_trailingUnderlineLabelFontDefault;
 
     CGFloat scale = UIScreen.mainScreen.scale;
     CGFloat characterCountHeightConstant =
-        ceil(((MDCMultilineTextField *)self.textInput).textView.font.lineHeight * scale) / scale;
+        MDCCeil(((MDCMultilineTextField *)self.textInput).textView.font.lineHeight * scale) / scale;
     if (!self.multilineCharacterCountHeight) {
       self.multilineCharacterCountHeight =
           [NSLayoutConstraint constraintWithItem:self.textInput.trailingUnderlineLabel
@@ -975,7 +976,7 @@ static UIFont *_trailingUnderlineLabelFontDefault;
 
  The vertical layout is, simply:
  MDCTextInputControllerFullWidthVerticalPadding                       // Top padding
- rint(MAX(self.textInput.font.lineHeight,                          // Text field or placeholder
+ MDCRint(MAX(self.textInput.font.lineHeight,                          // Text field or placeholder
              self.textInput.placeholderLabel.font.lineHeight))
  MDCTextInputControllerFullWidthVerticalPadding                       // Bottom padding
  */
@@ -995,14 +996,14 @@ static UIFont *_trailingUnderlineLabelFontDefault;
   // The trailing label gets in the way. If it has a frame, it's used. But if not, an
   // estimate is made of the size the text will be.
   if (CGRectGetWidth(self.textInput.trailingUnderlineLabel.frame) > 1) {
-    textInsets.right += ceil(CGRectGetWidth(self.textInput.trailingUnderlineLabel.frame));
+    textInsets.right += MDCCeil(CGRectGetWidth(self.textInput.trailingUnderlineLabel.frame));
   } else if (self.characterCountMax) {
     CGRect charCountRect = [[self characterCountText]
         boundingRectWithSize:self.textInput.bounds.size
                      options:NSStringDrawingUsesLineFragmentOrigin
                   attributes:@{NSFontAttributeName : self.textInput.trailingUnderlineLabel.font}
                      context:nil];
-    textInsets.right += ceil(CGRectGetWidth(charCountRect));
+    textInsets.right += MDCCeil(CGRectGetWidth(charCountRect));
   }
 
   return textInsets;

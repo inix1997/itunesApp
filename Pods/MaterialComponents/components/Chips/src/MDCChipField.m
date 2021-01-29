@@ -18,6 +18,7 @@
 
 #import "MDCChipFieldDelegate.h"
 #import "MaterialTextFields.h"
+#import "MaterialMath.h"
 
 NSString *const MDCEmptyTextString = @"";
 NSString *const MDCChipDelimiterSpace = @" ";
@@ -413,8 +414,8 @@ static inline UIBezierPath *MDCPathForClearButtonImageFrame(CGRect frame) {
 
   CGRect innerBounds =
       CGRectMake(CGRectGetMinX(frame) + 2, CGRectGetMinY(frame) + 2,
-                 floor((frame.size.width - 2) * (CGFloat)0.90909 + (CGFloat)0.5),
-                 floor((frame.size.height - 2) * (CGFloat)0.90909 + (CGFloat)0.5));
+                 MDCFloor((frame.size.width - 2) * (CGFloat)0.90909 + (CGFloat)0.5),
+                 MDCFloor((frame.size.height - 2) * (CGFloat)0.90909 + (CGFloat)0.5));
   UIBezierPath *ic_clear_path = [UIBezierPath bezierPath];
   [ic_clear_path moveToPoint:CGPointMake(CGRectGetMinX(innerBounds) +
                                              (CGFloat)0.50000 * innerBounds.size.width,

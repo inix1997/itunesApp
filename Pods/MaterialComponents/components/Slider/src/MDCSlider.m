@@ -29,7 +29,9 @@ static const CGFloat kSliderDefaultThumbRadius = 6;
 static const CGFloat kSliderAccessibilityIncrement = (CGFloat)0.1;
 static const CGFloat kSliderLightThemeTrackAlpha = (CGFloat)0.26;
 
-static inline UIColor *MDCThumbTrackDefaultColor(void) { return MDCPalette.bluePalette.tint500; }
+static inline UIColor *MDCThumbTrackDefaultColor(void) {
+  return MDCPalette.bluePalette.tint500;
+}
 
 @interface MDCSlider () <MDCThumbTrackDelegate>
 @property(nonnull, nonatomic, strong)
@@ -72,8 +74,9 @@ static inline UIColor *MDCThumbTrackDefaultColor(void) { return MDCPalette.blueP
   _thumbTrack.disabledTrackHasThumbGaps = YES;
   _thumbTrack.trackEndsAreInset = YES;
   _thumbTrack.thumbRadius = kSliderDefaultThumbRadius;
-  _thumbTrack.thumbIsSmallerWhenDisabled = NO;
+  _thumbTrack.thumbIsSmallerWhenDisabled = YES;
   _thumbTrack.thumbIsHollowAtStart = YES;
+  _thumbTrack.thumbGrowsWhenDragging = YES;
   _thumbTrack.shouldDisplayInk = NO;
   _thumbTrack.shouldDisplayRipple = YES;
   _thumbTrack.discreteDotVisibility = MDCThumbDiscreteDotVisibilityWhenDragging;
@@ -116,9 +119,13 @@ static inline UIColor *MDCThumbTrackDefaultColor(void) { return MDCPalette.blueP
 
   _mdc_overrideBaseElevation = -1;
 
-  _hapticsEnabled = YES;
-  self.feedbackGenerator =
-      [[UIImpactFeedbackGenerator alloc] initWithStyle:UIImpactFeedbackStyleLight];
+  if (@available(iOS 10.0, *)) {
+    _hapticsEnabled = YES;
+    self.feedbackGenerator =
+        [[UIImpactFeedbackGenerator alloc] initWithStyle:UIImpactFeedbackStyleLight];
+  } else {
+    _hapticsEnabled = NO;
+  }
   _shouldEnableHapticsForAllDiscreteValues = NO;
 
   _previousValue = -CGFLOAT_MAX;
@@ -248,28 +255,12 @@ static inline UIColor *MDCThumbTrackDefaultColor(void) { return MDCPalette.blueP
 
 #pragma mark - ThumbTrack passthrough methods
 
-- (CGFloat)thumbRippleMaximumRadius {
-  return _thumbTrack.thumbRippleMaximumRadius;
-}
-
-- (void)setThumbRippleMaximumRadius:(CGFloat)thumbRippleMaximumRadius {
-  _thumbTrack.thumbRippleMaximumRadius = thumbRippleMaximumRadius;
-}
-
 - (void)setThumbRadius:(CGFloat)thumbRadius {
   _thumbTrack.thumbRadius = thumbRadius;
 }
 
 - (CGFloat)thumbRadius {
   return _thumbTrack.thumbRadius;
-}
-
-- (void)setThumbBorderWidth:(CGFloat)borderWidth {
-  _thumbTrack.thumbView.borderWidth = borderWidth;
-}
-
-- (CGFloat)thumbBorderWidth {
-  return _thumbTrack.thumbView.borderWidth;
 }
 
 - (void)setThumbElevation:(MDCShadowElevation)thumbElevation {
@@ -282,14 +273,6 @@ static inline UIColor *MDCThumbTrackDefaultColor(void) { return MDCPalette.blueP
 
 - (MDCShadowElevation)thumbElevation {
   return _thumbTrack.thumbElevation;
-}
-
-- (void)setThumbIsSmallerWhenDisabled:(BOOL)thumbIsSmallerWhenDisabled {
-  _thumbTrack.thumbIsSmallerWhenDisabled = thumbIsSmallerWhenDisabled;
-}
-
-- (BOOL)thumbIsSmallerWhenDisabled {
-  return _thumbTrack.thumbIsSmallerWhenDisabled;
 }
 
 - (CGFloat)mdc_currentElevation {
@@ -409,9 +392,19 @@ static inline UIColor *MDCThumbTrackDefaultColor(void) { return MDCPalette.blueP
   _thumbTrack.thumbIsHollowAtStart = thumbHollowAtStart;
 }
 
+- (void)setHapticsEnabled:(BOOL)hapticsEnabled {
+  if (@available(iOS 10.0, *)) {
+    _hapticsEnabled = hapticsEnabled;
+  } else {
+    _hapticsEnabled = NO;
+  }
+}
+
 - (void)setShouldEnableHapticsForAllDiscreteValues:(BOOL)shouldEnableHapticsForAllDiscreteValues {
-  if (_thumbTrack.numDiscreteValues >= 2) {
-    _shouldEnableHapticsForAllDiscreteValues = shouldEnableHapticsForAllDiscreteValues;
+  if (@available(iOS 10.0, *)) {
+    if (_thumbTrack.numDiscreteValues >= 2) {
+      _shouldEnableHapticsForAllDiscreteValues = shouldEnableHapticsForAllDiscreteValues;
+    }
   }
 }
 
@@ -698,24 +691,28 @@ static inline UIColor *MDCThumbTrackDefaultColor(void) { return MDCPalette.blueP
 - (void)thumbTrackValueChanged:(__unused MDCThumbTrack *)thumbTrack {
   [self sendActionsForControlEvents:UIControlEventValueChanged];
   UIAccessibilityPostNotification(UIAccessibilityAnnouncementNotification, self.accessibilityValue);
-  if (self.hapticsEnabled && _previousValue != _thumbTrack.value) {
-    BOOL valueCrossesAboveAnchor = (_previousValue < _thumbTrack.filledTrackAnchorValue &&
-                                    _thumbTrack.filledTrackAnchorValue <= _thumbTrack.value);
-    BOOL valueCrossesBelowAnchor = (_thumbTrack.value <= _thumbTrack.filledTrackAnchorValue &&
-                                    _thumbTrack.filledTrackAnchorValue < _previousValue);
-    BOOL crossesAnchor =
-        _previousValue != -CGFLOAT_MAX && (valueCrossesAboveAnchor || valueCrossesBelowAnchor);
-    if (self.shouldEnableHapticsForAllDiscreteValues ||
-        _thumbTrack.value == _thumbTrack.minimumValue ||
-        _thumbTrack.value == _thumbTrack.maximumValue || crossesAnchor) {
-      [self.feedbackGenerator impactOccurred];
+  if (@available(iOS 10.0, *)) {
+    if (self.hapticsEnabled && _previousValue != _thumbTrack.value) {
+      BOOL valueCrossesAboveAnchor = (_previousValue < _thumbTrack.filledTrackAnchorValue &&
+                                      _thumbTrack.filledTrackAnchorValue <= _thumbTrack.value);
+      BOOL valueCrossesBelowAnchor = (_thumbTrack.value <= _thumbTrack.filledTrackAnchorValue &&
+                                      _thumbTrack.filledTrackAnchorValue < _previousValue);
+      BOOL crossesAnchor =
+          _previousValue != -CGFLOAT_MAX && (valueCrossesAboveAnchor || valueCrossesBelowAnchor);
+      if (self.shouldEnableHapticsForAllDiscreteValues ||
+          _thumbTrack.value == _thumbTrack.minimumValue ||
+          _thumbTrack.value == _thumbTrack.maximumValue || crossesAnchor) {
+        [self.feedbackGenerator impactOccurred];
+      }
     }
   }
   self.previousValue = _thumbTrack.value;
 }
 
 - (void)thumbTrackTouchDown:(__unused MDCThumbTrack *)thumbTrack {
-  [self.feedbackGenerator prepare];
+  if (@available(iOS 10.0, *)) {
+    [self.feedbackGenerator prepare];
+  }
   [self sendActionsForControlEvents:UIControlEventTouchDown];
 }
 

@@ -15,6 +15,7 @@
 
 #import <CoreGraphics/CoreGraphics.h>
 
+#import "MaterialMath.h"
 #import "MaterialPalettes.h"
 
 // This is very close to the material.io guidelines article considering the fonts differ.
@@ -53,7 +54,7 @@ static const CGFloat kMinDiameter = 9;
   CGFloat badgeXPadding = (CGFloat)(sin(M_PI_4) * (radius));  // sin(ø) = badgeXPadding / radius
   badgeXPadding += 1;  // Extra point to ensure some background extends beyond the label.
   // Align to the nearest pixel
-  badgeXPadding = round(badgeXPadding * self.contentScaleFactor) / self.contentScaleFactor;
+  badgeXPadding = MDCRound(badgeXPadding * self.contentScaleFactor) / self.contentScaleFactor;
 
   return badgeXPadding;
 }

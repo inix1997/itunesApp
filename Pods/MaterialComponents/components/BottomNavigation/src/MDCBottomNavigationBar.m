@@ -20,6 +20,8 @@
 
 #import "private/MDCBottomNavigationBar+Private.h"
 #import "private/MDCBottomNavigationItemView.h"
+#import "private/MaterialBottomNavigationStrings.h"
+#import "private/MaterialBottomNavigationStrings_table.h"
 #import "MaterialAvailability.h"
 #import "MDCBottomNavigationBarDelegate.h"
 #import "MaterialPalettes.h"
@@ -29,6 +31,9 @@
 #import "MaterialTypography.h"
 #import "MaterialMath.h"
 
+// The Bundle for string resources.
+static NSString *const kBundleName = @"MaterialBottomNavigation.bundle";
+
 // KVO context
 static char *const kKVOContextMDCBottomNavigationBar = "kKVOContextMDCBottomNavigationBar";
 
@@ -36,7 +41,7 @@ static const CGFloat kMinItemWidth = 80;
 static const CGFloat kPreferredItemWidth = 120;
 static const CGFloat kMaxItemWidth = 168;
 // The default amount of internal padding on the leading/trailing edges of each bar item.
-static const CGFloat kDefaultItemHorizontalPadding = 0;
+static const CGFloat kDefaultItemHorizontalPadding = 12;
 static const CGFloat kBarHeightStackedTitle = 56;
 static const CGFloat kBarHeightAdjacentTitle = 40;
 static const CGFloat kItemsHorizontalMargin = 12;
@@ -56,6 +61,7 @@ static NSString *const kOfAnnouncement = @"of";
 @property(nonatomic, strong) UIVisualEffectView *blurEffectView;
 @property(nonatomic, strong) UIView *itemsLayoutView;
 @property(nonatomic, strong) NSMutableArray *inkControllers;
+@property(nonatomic) BOOL shouldPretendToBeATabBar;
 @property(nonatomic, strong) UILayoutGuide *barItemsLayoutGuide NS_AVAILABLE_IOS(9_0);
 @property(nonatomic, assign) BOOL enableRippleBehavior;
 
@@ -66,12 +72,12 @@ static NSString *const kOfAnnouncement = @"of";
  */
 @property(nonatomic, nullable) id<UILargeContentViewerItem> lastLargeContentViewerItem
     NS_AVAILABLE_IOS(13_0);
-@property(nonatomic, assign) BOOL isLargeContentLongPressInProgress;
 #endif  // MDC_AVAILABLE_SDK_IOS(13_0)
 
 @end
 
 @implementation MDCBottomNavigationBar
+
 @synthesize mdc_overrideBaseElevation = _mdc_overrideBaseElevation;
 @synthesize mdc_elevationDidChangeBlock = _mdc_elevationDidChangeBlock;
 
@@ -103,6 +109,7 @@ static NSString *const kOfAnnouncement = @"of";
   _itemsDistributed = YES;
   _barTintColor = [UIColor whiteColor];
   _truncatesLongTitles = YES;
+  _sizeThatFitsIncludesSafeArea = NO;
   _titlesNumberOfLines = 1;
   _mdc_overrideBaseElevation = -1;
   _itemBadgeTextColor = UIColor.whiteColor;
@@ -140,7 +147,19 @@ static NSString *const kOfAnnouncement = @"of";
   _itemsLayoutView.clipsToBounds = NO;
   [_barView addSubview:_itemsLayoutView];
 
-  _itemsLayoutView.accessibilityTraits = UIAccessibilityTraitTabBar;
+#if MDC_AVAILABLE_SDK_IOS(10_0)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunguarded-availability"
+#pragma clang diagnostic ignored "-Wtautological-pointer-compare"
+  if (&UIAccessibilityTraitTabBar != NULL) {
+    _itemsLayoutView.accessibilityTraits = UIAccessibilityTraitTabBar;
+  } else {
+    _shouldPretendToBeATabBar = YES;
+  }
+#pragma clang diagnostic pop
+#else
+  _shouldPretendToBeATabBar = YES;
+#endif  // MDC_AVAILABLE_SDK_IOS(10_0)
   _elevation = MDCShadowElevationBottomNavigationBar;
   [(MDCShadowLayer *)self.layer setElevation:_elevation];
   UIColor *defaultShadowColor = UIColor.blackColor;
@@ -186,7 +205,7 @@ static NSString *const kOfAnnouncement = @"of";
 }
 
 - (CGSize)intrinsicContentSize {
-  CGFloat height = [self calculateBarHeight];
+  CGFloat height = self.isTitleBelowIcon ? kBarHeightStackedTitle : kBarHeightAdjacentTitle;
   CGFloat itemWidth = [self widthForItemsWhenCenteredWithAvailableWidth:CGFLOAT_MAX height:height];
   CGSize size = CGSizeMake(itemWidth * self.items.count, height);
   return size;
@@ -197,14 +216,19 @@ static NSString *const kOfAnnouncement = @"of";
 }
 
 - (CGSize)sizeThatFits:(CGSize)size {
-  CGFloat height = self.barHeight;
-  if (self.barHeight <= 0) {
-    height = kBarHeightStackedTitle;
-    if (self.alignment == MDCBottomNavigationBarAlignmentJustifiedAdjacentTitles &&
-        self.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
-      height = kBarHeightAdjacentTitle;
+  CGFloat height = kBarHeightStackedTitle;
+  if (self.alignment == MDCBottomNavigationBarAlignmentJustifiedAdjacentTitles &&
+      self.traitCollection.horizontalSizeClass == UIUserInterfaceSizeClassRegular) {
+    height = kBarHeightAdjacentTitle;
+  }
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+  if (@available(iOS 11.0, *)) {
+    if (self.sizeThatFitsIncludesSafeArea) {
+      height += self.safeAreaInsets.bottom;
     }
   }
+#pragma clang diagnostic pop
 
   return CGSizeMake(size.width, height);
 }
@@ -240,14 +264,6 @@ static NSString *const kOfAnnouncement = @"of";
       return YES;
       break;
   }
-}
-
-- (CGFloat)calculateBarHeight {
-  CGFloat height = self.isTitleBelowIcon ? kBarHeightStackedTitle : kBarHeightAdjacentTitle;
-  if (self.barHeight > 0) {
-    height = self.barHeight;
-  }
-  return height;
 }
 
 - (void)layoutLandscapeModeWithBottomNavSize:(CGSize)bottomNavSize
@@ -293,7 +309,7 @@ static NSString *const kOfAnnouncement = @"of";
 - (void)sizeItemsLayoutViewItemsDistributed:(BOOL)itemsDistributed
                           withBottomNavSize:(CGSize)bottomNavSize
                              containerWidth:(CGFloat)containerWidth {
-  CGFloat barHeight = [self calculateBarHeight];
+  CGFloat barHeight = self.isTitleBelowIcon ? kBarHeightStackedTitle : kBarHeightAdjacentTitle;
   UIEdgeInsets insets = self.mdc_safeAreaInsets;
   CGFloat bottomNavWidthInset = bottomNavSize.width - insets.left - insets.right;
   if (itemsDistributed) {
@@ -305,9 +321,9 @@ static NSString *const kOfAnnouncement = @"of";
     CGFloat layoutFrameWidth = maxItemWidth * self.items.count;
     layoutFrameWidth = MIN(bottomNavWidthInset, layoutFrameWidth);
     containerWidth = MIN(bottomNavWidthInset, MAX(containerWidth, layoutFrameWidth));
-    CGFloat clusteredOffsetX = floor((bottomNavSize.width - containerWidth) / 2);
+    CGFloat clusteredOffsetX = (bottomNavSize.width - containerWidth) / 2;
     self.itemsLayoutView.frame = CGRectMake(clusteredOffsetX, 0, containerWidth, barHeight);
-    CGFloat itemLayoutFrameOffsetX = floor((containerWidth - layoutFrameWidth) / 2);
+    CGFloat itemLayoutFrameOffsetX = (containerWidth - layoutFrameWidth) / 2;
     self.itemLayoutFrame = CGRectMake(itemLayoutFrameOffsetX, 0, layoutFrameWidth, barHeight);
   }
 }
@@ -325,13 +341,12 @@ static NSString *const kOfAnnouncement = @"of";
     itemView.titleBelowIcon = self.isTitleBelowIcon;
     if (layoutDirection == UIUserInterfaceLayoutDirectionLeftToRight) {
       itemView.frame = CGRectMake(
-          floor(CGRectGetMinX(self.itemLayoutFrame) + i * itemWidth + self.itemsHorizontalPadding),
-          0, floor(itemWidth - 2 * self.itemsHorizontalPadding), navBarHeight);
+          CGRectGetMinX(self.itemLayoutFrame) + i * itemWidth + self.itemsHorizontalPadding, 0,
+          itemWidth - 2 * self.itemsHorizontalPadding, navBarHeight);
     } else {
-      itemView.frame =
-          CGRectMake(floor(CGRectGetMaxX(self.itemLayoutFrame) - (i + 1) * itemWidth +
-                           self.itemsHorizontalPadding),
-                     0, floor(itemWidth - 2 * self.itemsHorizontalPadding), navBarHeight);
+      itemView.frame = CGRectMake(
+          CGRectGetMaxX(self.itemLayoutFrame) - (i + 1) * itemWidth + self.itemsHorizontalPadding,
+          0, itemWidth - 2 * self.itemsHorizontalPadding, navBarHeight);
     }
   }
 }
@@ -574,14 +589,26 @@ static NSString *const kOfAnnouncement = @"of";
     itemView.titlePositionAdjustment = item.titlePositionAdjustment;
     itemView.badgeColor = self.itemBadgeBackgroundColor;
     itemView.badgeTextColor = self.itemBadgeTextColor;
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     MDCInkTouchController *controller = [[MDCInkTouchController alloc] initWithView:itemView];
-#pragma clang diagnostic pop
     controller.delegate = self;
     [self.inkControllers addObject:controller];
     itemView.rippleTouchController.delegate = self;
 
+    if (self.shouldPretendToBeATabBar) {
+      NSString *key = kMaterialBottomNavigationStringTable
+          [kStr_MaterialBottomNavigationItemCountAccessibilityHint];
+      NSString *itemOfTotalString = NSLocalizedStringFromTableInBundle(
+          key, kMaterialBottomNavigationStringsTableName, [[self class] bundle], kOfString);
+      NSString *localizedPosition =
+          [NSString localizedStringWithFormat:itemOfTotalString, (i + 1), (int)items.count];
+      // Allow a custom `accessibilityHint` to be assigned even if "faking" a tab bar is enabled.
+      if (itemView.button.accessibilityHint.length) {
+        itemView.button.accessibilityHint =
+            [NSString stringWithFormat:@"%@. %@", localizedPosition, itemView.accessibilityHint];
+      } else {
+        itemView.button.accessibilityHint = localizedPosition;
+      }
+    }
     if (item.image) {
       itemView.image = item.image;
     }
@@ -591,9 +618,17 @@ static NSString *const kOfAnnouncement = @"of";
     if (item.badgeValue) {
       itemView.badgeValue = item.badgeValue;
     }
-    if (item.badgeColor) {
-      itemView.badgeColor = item.badgeColor;
+#if MDC_AVAILABLE_SDK_IOS(10_0)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wpartial-availability"
+    NSOperatingSystemVersion iOS10Version = {10, 0, 0};
+    if ([NSProcessInfo.processInfo isOperatingSystemAtLeastVersion:iOS10Version]) {
+      if (item.badgeColor) {
+        itemView.badgeColor = item.badgeColor;
+      }
     }
+#pragma clang diagnostic pop
+#endif  // MDC_AVAILABLE_SDK_IOS(10_0)
     itemView.selected = NO;
 
 #if MDC_AVAILABLE_SDK_IOS(13_0)
@@ -762,8 +797,11 @@ static NSString *const kOfAnnouncement = @"of";
   _itemBadgeBackgroundColor = itemBadgeBackgroundColor;
   for (NSUInteger i = 0; i < self.items.count; ++i) {
     UITabBarItem *item = self.items[i];
-    if (item.badgeColor) {
-      continue;
+    if (@available(iOS 10.0, *)) {
+      // Skip items with a custom color
+      if (item.badgeColor) {
+        continue;
+      }
     }
     MDCBottomNavigationItemView *itemView = self.itemViews[i];
     itemView.badgeColor = itemBadgeBackgroundColor;
@@ -799,10 +837,28 @@ static NSString *const kOfAnnouncement = @"of";
   [self setNeedsLayout];
 }
 
+#pragma mark - Resource bundle
+
++ (NSBundle *)bundle {
+  static NSBundle *bundle = nil;
+  static dispatch_once_t onceToken;
+  dispatch_once(&onceToken, ^{
+    bundle = [NSBundle bundleWithPath:[self bundlePathWithName:kBundleName]];
+  });
+  return bundle;
+}
+
++ (NSString *)bundlePathWithName:(NSString *)bundleName {
+  // In iOS 8+, we could be included by way of a dynamic framework, and our resource bundles may
+  // not be in the main .app bundle, but rather in a nested framework, so figure out where we live
+  // and use that as the search location.
+  NSBundle *bundle = [NSBundle bundleForClass:[MDCBottomNavigationBar class]];
+  NSString *resourcePath = [(nil == bundle ? [NSBundle mainBundle] : bundle) resourcePath];
+  return [resourcePath stringByAppendingPathComponent:bundleName];
+}
+
 #pragma mark - MDCInkTouchControllerDelegate methods
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 - (MDCInkView *)inkTouchController:(MDCInkTouchController *)inkTouchController
             inkViewAtTouchLocation:(CGPoint)location {
   if ([inkTouchController.view isKindOfClass:[MDCBottomNavigationItemView class]]) {
@@ -818,7 +874,6 @@ static NSString *const kOfAnnouncement = @"of";
   }
   return YES;
 }
-#pragma clang diagnostic pop
 
 #pragma mark - MDCRippleTouchControllerDelegate methods
 
@@ -836,32 +891,6 @@ static NSString *const kOfAnnouncement = @"of";
   return self.elevation;
 }
 
-- (void)cancelRippleInItemView:(MDCBottomNavigationItemView *)itemView animated:(BOOL)animated {
-  if (self.enableRippleBehavior) {
-    if (animated) {
-      [itemView.rippleTouchController.rippleView beginRippleTouchUpAnimated:YES completion:nil];
-    } else {
-      [itemView.rippleTouchController.rippleView cancelAllRipplesAnimated:NO completion:nil];
-    }
-  } else {
-    if (animated) {
-      [itemView.inkView startTouchEndAtPoint:itemView.center animated:YES withCompletion:nil];
-    } else {
-      [itemView.inkView cancelAllAnimationsAnimated:NO];
-    }
-  }
-}
-
-- (void)beginRippleInItemView:(MDCBottomNavigationItemView *)itemView animated:(BOOL)animated {
-  if (self.enableRippleBehavior) {
-    [itemView.rippleTouchController.rippleView beginRippleTouchDownAtPoint:itemView.center
-                                                                  animated:animated
-                                                                completion:nil];
-  } else {
-    [itemView.inkView startTouchBeganAtPoint:itemView.center animated:animated withCompletion:nil];
-  }
-}
-
 #pragma mark - UILargeContentViewerInteractionDelegate
 
 #if MDC_AVAILABLE_SDK_IOS(13_0)
@@ -869,15 +898,8 @@ static NSString *const kOfAnnouncement = @"of";
                                     (UILargeContentViewerInteraction *)interaction
                                                   itemAtPoint:(CGPoint)point
     NS_AVAILABLE_IOS(13_0) {
-  MDCBottomNavigationItemView *lastItemView =
-      (MDCBottomNavigationItemView *)self.lastLargeContentViewerItem;
-
   if (!CGRectContainsPoint(self.bounds, point)) {
-    // The touch has wandered outside of the view. Clear the ripple/ink and do not display the
-    // content viewer.
-    if (lastItemView) {
-      [self cancelRippleInItemView:lastItemView animated:NO];
-    }
+    // The touch has wandered outside of the view. Do not display the content viewer.
     self.lastLargeContentViewerItem = nil;
     return nil;
   }
@@ -888,32 +910,43 @@ static NSString *const kOfAnnouncement = @"of";
     return self.lastLargeContentViewerItem;
   }
 
-  if (lastItemView != itemView) {
-    if (lastItemView) {
-      [self cancelRippleInItemView:lastItemView animated:NO];
+  MDCBottomNavigationItemView *lastItemView =
+      (MDCBottomNavigationItemView *)self.lastLargeContentViewerItem;
+
+  if (lastItemView && lastItemView != itemView) {
+    if (self.enableRippleBehavior) {
+      [lastItemView.rippleTouchController.rippleView cancelAllRipplesAnimated:NO completion:nil];
+      [itemView.rippleTouchController.rippleView beginRippleTouchDownAtPoint:itemView.center
+                                                                    animated:NO
+                                                                  completion:nil];
+    } else {
+      [lastItemView.inkView cancelAllAnimationsAnimated:NO];
+      [itemView.inkView startTouchBeganAtPoint:itemView.center animated:NO withCompletion:nil];
     }
-    // Only start ink/ripple if it's not the first touch down of the long press
-    if (self.isLargeContentLongPressInProgress) {
-      [self beginRippleInItemView:itemView animated:NO];
-    }
-    self.lastLargeContentViewerItem = itemView;
   }
-  self.isLargeContentLongPressInProgress = YES;
+
+  self.lastLargeContentViewerItem = itemView;
   return itemView;
 }
 
 - (void)largeContentViewerInteraction:(UILargeContentViewerInteraction *)interaction
                          didEndOnItem:(id<UILargeContentViewerItem>)item
                               atPoint:(CGPoint)point NS_AVAILABLE_IOS(13_0) {
-  if (self.lastLargeContentViewerItem) {
-    MDCBottomNavigationItemView *lastItemView =
-        (MDCBottomNavigationItemView *)self.lastLargeContentViewerItem;
-    [self cancelRippleInItemView:lastItemView animated:YES];
-    [self didTouchUpInsideButton:lastItemView.button];
+  if (item) {
+    for (NSUInteger i = 0; i < self.items.count; i++) {
+      MDCBottomNavigationItemView *itemView = self.itemViews[i];
+      if (item == itemView) {
+        if (self.enableRippleBehavior) {
+          [itemView.rippleTouchController.rippleView beginRippleTouchUpAnimated:YES completion:nil];
+        } else {
+          [itemView.inkView startTouchEndAtPoint:itemView.center animated:YES withCompletion:nil];
+        }
+        [self didTouchUpInsideButton:itemView.button];
+      }
+    }
   }
 
   self.lastLargeContentViewerItem = nil;
-  self.isLargeContentLongPressInProgress = NO;
 }
 #endif  // MDC_AVAILABLE_SDK_IOS(13_0)
 

@@ -23,11 +23,6 @@ This style object is used by MDCTextControls adopting the Material Filled style.
 @interface MDCTextControlStyleFilled : MDCTextControlStyleUnderlined <MDCTextControlStyle>
 
 /**
-The corner radius of the top two corners.
-*/
-@property(nonatomic, assign) CGFloat topCornerRadius;
-
-/**
 Sets the filled background color color for a given state.
 @param filledBackgroundColor The UIColor for the given state.
 @param state The MDCTextControlState.

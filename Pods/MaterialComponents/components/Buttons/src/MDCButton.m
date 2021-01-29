@@ -115,15 +115,11 @@ static NSAttributedString *UppercaseAttributedString(NSAttributedString *string)
   CGFloat _inkMaxRippleRadius;
 }
 @property(nonatomic, strong, readonly, nonnull) MDCStatefulRippleView *rippleView;
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 @property(nonatomic, strong) MDCInkView *inkView;
-#pragma clang diagnostic pop
 @property(nonatomic, readonly, strong) MDCShapedShadowLayer *layer;
 @property(nonatomic, assign) BOOL accessibilityTraitsIncludesButton;
 @property(nonatomic, assign) BOOL enableTitleFontForState;
 @property(nonatomic, assign) UIEdgeInsets visibleAreaInsets;
-@property(nonatomic, strong) UIView *visibleAreaLayoutGuideView;
 @property(nonatomic) UIEdgeInsets hitAreaInsets;
 @property(nonatomic, assign) UIEdgeInsets currentVisibleAreaInsets;
 @end
@@ -133,7 +129,6 @@ static NSAttributedString *UppercaseAttributedString(NSAttributedString *string)
 @synthesize mdc_overrideBaseElevation = _mdc_overrideBaseElevation;
 @synthesize mdc_elevationDidChangeBlock = _mdc_elevationDidChangeBlock;
 @synthesize visibleAreaInsets = _visibleAreaInsets;
-@synthesize visibleAreaLayoutGuide = _visibleAreaLayoutGuide;
 @dynamic layer;
 
 + (Class)layerClass {
@@ -216,10 +211,7 @@ static NSAttributedString *UppercaseAttributedString(NSAttributedString *string)
   _shadowColors[@(UIControlStateNormal)] = [UIColor colorWithCGColor:self.layer.shadowColor];
 
   // Set up ink layer.
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
   _inkView = [[MDCInkView alloc] initWithFrame:self.bounds];
-#pragma clang diagnostic pop
   _inkView.usesLegacyInkRipple = NO;
   [self insertSubview:_inkView belowSubview:self.imageView];
   // UIButton has a drag enter/exit boundary that is outside of the frame of the button itself.
@@ -327,10 +319,6 @@ static NSAttributedString *UppercaseAttributedString(NSAttributedString *string)
           [self generateShapeWithCornerRadius:self.layer.cornerRadius
                             visibleAreaInsets:visibleAreaInsets];
       [self configureLayerWithShapeGenerator:shapeGenerator];
-      if (self.visibleAreaLayoutGuideView) {
-        self.visibleAreaLayoutGuideView.frame =
-            UIEdgeInsetsInsetRect(self.bounds, visibleAreaInsets);
-      }
     }
   }
 
@@ -391,20 +379,6 @@ static NSAttributedString *UppercaseAttributedString(NSAttributedString *string)
 - (CGSize)sizeThatFits:(CGSize)size {
   CGSize givenSizeWithInsets = CGSizeShrinkWithInsets(size, _visibleAreaInsets);
   CGSize superSize = [super sizeThatFits:givenSizeWithInsets];
-
-  // TODO(b/171816831): revisit this in a future iOS version to verify reproducibility.
-  // Because of a UIKit bug in iOS 13 and 14 (current), buttons that have both an image and text
-  // will not return an appropriately large size from [super sizeThatFits:]. In this case, we need
-  // to expand the width. The number 1 was chosen somewhat arbitrarily, but based on some spot
-  // testing, adding the smallest amount of extra width possible seems to fix the issue.
-#if defined(__IPHONE_13_0) && (__IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_13_0)
-  if (@available(iOS 13.0, *)) {
-    if (UIAccessibilityIsBoldTextEnabled() && [self imageForState:UIControlStateNormal] &&
-        [self titleForState:UIControlStateNormal]) {
-      superSize.width += 1;
-    }
-  }
-#endif
 
   if (self.minimumSize.height > 0) {
     superSize.height = MAX(self.minimumSize.height, superSize.height);
@@ -1094,7 +1068,7 @@ static NSAttributedString *UppercaseAttributedString(NSAttributedString *string)
 - (void)updateInkForShape {
   CGRect boundingBox = CGPathGetBoundingBox(self.layer.shapeLayer.path);
   self.inkView.maxRippleRadius =
-      (CGFloat)(hypot(CGRectGetHeight(boundingBox), CGRectGetWidth(boundingBox)) / 2 + 10);
+      (CGFloat)(MDCHypot(CGRectGetHeight(boundingBox), CGRectGetWidth(boundingBox)) / 2 + 10);
   self.inkView.layer.masksToBounds = NO;
   self.rippleView.layer.masksToBounds = NO;
 }
@@ -1152,10 +1126,9 @@ static NSAttributedString *UppercaseAttributedString(NSAttributedString *string)
       _cornerRadiusObserverAdded = NO;
     }
   } else {
-    UIEdgeInsets visibleAreaInsets = self.visibleAreaInsets;
     MDCRectangleShapeGenerator *shapeGenerator =
         [self generateShapeWithCornerRadius:self.layer.cornerRadius
-                          visibleAreaInsets:visibleAreaInsets];
+                          visibleAreaInsets:self.visibleAreaInsets];
     [self configureLayerWithShapeGenerator:shapeGenerator];
 
     if (!_cornerRadiusObserverAdded) {
@@ -1213,39 +1186,13 @@ static NSAttributedString *UppercaseAttributedString(NSAttributedString *string)
     CGFloat additionalRequiredHeight =
         MAX(0, CGRectGetHeight(self.bounds) - visibleAreaSize.height);
     CGFloat additionalRequiredWidth = MAX(0, CGRectGetWidth(self.bounds) - visibleAreaSize.width);
-    visibleAreaInsets.top = ceil(additionalRequiredHeight * 0.5f);
+    visibleAreaInsets.top = MDCCeil(additionalRequiredHeight * 0.5f);
     visibleAreaInsets.bottom = additionalRequiredHeight - visibleAreaInsets.top;
-    visibleAreaInsets.left = ceil(additionalRequiredWidth * 0.5f);
+    visibleAreaInsets.left = MDCCeil(additionalRequiredWidth * 0.5f);
     visibleAreaInsets.right = additionalRequiredWidth - visibleAreaInsets.left;
   }
 
   return visibleAreaInsets;
-}
-
-- (UILayoutGuide *)visibleAreaLayoutGuide {
-  if (!_visibleAreaLayoutGuide) {
-    _visibleAreaLayoutGuide = [[UILayoutGuide alloc] init];
-    [self addLayoutGuide:_visibleAreaLayoutGuide];
-    _visibleAreaLayoutGuideView = [[UIView alloc] init];
-    _visibleAreaLayoutGuideView.userInteractionEnabled = NO;
-    [self insertSubview:_visibleAreaLayoutGuideView atIndex:0];
-    self.visibleAreaLayoutGuideView.frame =
-        UIEdgeInsetsInsetRect(self.bounds, self.visibleAreaInsets);
-
-    [_visibleAreaLayoutGuide.leftAnchor
-        constraintEqualToAnchor:_visibleAreaLayoutGuideView.leftAnchor]
-        .active = YES;
-    [_visibleAreaLayoutGuide.rightAnchor
-        constraintEqualToAnchor:_visibleAreaLayoutGuideView.rightAnchor]
-        .active = YES;
-    [_visibleAreaLayoutGuide.topAnchor
-        constraintEqualToAnchor:_visibleAreaLayoutGuideView.topAnchor]
-        .active = YES;
-    [_visibleAreaLayoutGuide.bottomAnchor
-        constraintEqualToAnchor:_visibleAreaLayoutGuideView.bottomAnchor]
-        .active = YES;
-  }
-  return _visibleAreaLayoutGuide;
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath
@@ -1253,8 +1200,7 @@ static NSAttributedString *UppercaseAttributedString(NSAttributedString *string)
                         change:(NSDictionary *)change
                        context:(void *)context {
   if (context == kKVOContextCornerRadius) {
-    if ((!UIEdgeInsetsEqualToEdgeInsets(self.visibleAreaInsets, UIEdgeInsetsZero) ||
-         self.centerVisibleArea) &&
+    if (!UIEdgeInsetsEqualToEdgeInsets(self.visibleAreaInsets, UIEdgeInsetsZero) &&
         self.shapeGenerator) {
       MDCRectangleShapeGenerator *shapeGenerator =
           [self generateShapeWithCornerRadius:self.layer.cornerRadius

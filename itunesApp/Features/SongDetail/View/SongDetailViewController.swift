@@ -19,6 +19,8 @@ class SongDetailViewController: UIViewController {
     var details: iTunesServiceModel?
     var albumArray: Array<iTunesServiceModel>?
     var player : AVPlayer?
+    let cellIdentifier = "songDetailCell"
+    let labelString = "Get to know the full song list of the album"
     
     init(details: iTunesServiceModel) {
         super.init(nibName: nil, bundle: nil)
@@ -40,7 +42,7 @@ class SongDetailViewController: UIViewController {
         super.viewDidLoad()
         setupViews()
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 18)]
-        tableView.register(SongDetailTableViewCell.self, forCellReuseIdentifier:"songDetailCell")
+        tableView.register(SongDetailTableViewCell.self, forCellReuseIdentifier:cellIdentifier)
         tableView.separatorStyle = .singleLine
         tableView.delegate = self
         tableView.dataSource = self
@@ -59,7 +61,7 @@ class SongDetailViewController: UIViewController {
         if let collectionNameFinal = collectionName {
             getToKnowAlbum.text = "Get to know the full song list of \(collectionNameFinal)"
         } else {
-            getToKnowAlbum.text = "Get to know the full song list of the album"
+            getToKnowAlbum.text = labelString
             
         }
     }
@@ -84,7 +86,7 @@ extension SongDetailViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: "songDetailCell", for: indexPath) as! SongDetailTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as! SongDetailTableViewCell
         let data = albumArray?[indexPath.row]
         cell.textLabel?.text = data?.trackName
         cell.textLabel?.numberOfLines = 1

@@ -27,7 +27,7 @@
 @interface MDCNavigationBarColorThemer : NSObject
 @end
 
-@interface MDCNavigationBarColorThemer (Deprecated)
+@interface MDCNavigationBarColorThemer (ToBeDeprecated)
 
 /**
  Applies a color scheme's properties to an MDCNavigationBar using the primary mapping.
@@ -42,8 +42,7 @@
  Learn more at docs/theming.md#migration-guide-themers-to-theming-extensions
  */
 + (void)applySemanticColorScheme:(nonnull id<MDCColorScheming>)colorScheme
-                 toNavigationBar:(nonnull MDCNavigationBar *)navigationBar
-    __deprecated_msg("Customize your MDCNavigationBar using its styling APIs directly.");
+                 toNavigationBar:(nonnull MDCNavigationBar *)navigationBar;
 
 /**
  Applies a color scheme's properties to an MDCNavigationBar using the surface mapping.
@@ -58,8 +57,7 @@
  Learn more at docs/theming.md#migration-guide-themers-to-theming-extensions
  */
 + (void)applySurfaceVariantWithColorScheme:(nonnull id<MDCColorScheming>)colorScheme
-                           toNavigationBar:(nonnull MDCNavigationBar *)navigationBar
-    __deprecated_msg("Customize your MDCNavigationBar using its styling APIs directly.");
+                           toNavigationBar:(nonnull MDCNavigationBar *)navigationBar;
 
 /**
  Applies a color scheme to theme a MDCNavigationBar.
@@ -72,7 +70,6 @@
  Learn more at docs/theming.md#migration-guide-themers-to-theming-extensions
  */
 + (void)applyColorScheme:(nonnull id<MDCColorScheme>)colorScheme
-         toNavigationBar:(nonnull MDCNavigationBar *)navigationBar
-    __deprecated_msg("Customize your MDCNavigationBar using its styling APIs directly.");
+         toNavigationBar:(nonnull MDCNavigationBar *)navigationBar;
 
 @end

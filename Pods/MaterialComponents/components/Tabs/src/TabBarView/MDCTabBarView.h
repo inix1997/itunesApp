@@ -14,8 +14,6 @@
 
 #import <UIKit/UIKit.h>
 
-#import "MaterialAvailability.h"
-
 @protocol MDCTabBarViewDelegate;
 @protocol MDCTabBarViewIndicatorTemplate;
 
@@ -216,23 +214,6 @@ __attribute__((objc_subclassing_restricted)) @interface MDCTabBarView : UIScroll
 - (UIEdgeInsets)contentPaddingForLayoutStyle:(MDCTabBarViewLayoutStyle)layoutStyle;
 
 /**
- The minimum width for each item in the tab bar view. Defaults to 90. This property is only used
- when the tab bar view's items are @c UITabBarItems and not @c MDCTabBarItems, or any other custom
- @c UITabBarItem subclasses that conform to @c MDCTabBarItemCustomViewing.
- */
-@property(nonatomic, assign) CGFloat minItemWidth;
-
-/** The edge insets between for each item in the tab bar view. Defaults to:
- * {.top = 8, .right = 16, .bottom = 8, .left = 16} for text only,
- * {.top = 12, .right = 16, .bottom = 12, .left = 16} for image only, and
- * {.top = 12, .right = 16, .bottom = 12, .left = 16} for text and image. Setting this property
- * overrides all three defualts. This property is only used when the tab bar view's items are @c
- * UITabBarItems and not @c MDCTabBarItems, or any other custom @c UITabBarItem subclasses that
- * conform to @c MDCTabBarItemCustomViewing.
- */
-@property(nonatomic) UIEdgeInsets itemViewContentInsets;
-
-/**
  Returns the @c UIAccessibility element associated with the provided item.
 
  @note The returned object is not guaranteed to be of type @c UIAccessibilityElement. It is
@@ -254,21 +235,3 @@ __attribute__((objc_subclassing_restricted)) @interface MDCTabBarView : UIScroll
     inCoordinateSpace:(nonnull id<UICoordinateSpace>)coordinateSpace;
 
 @end
-
-#if MDC_AVAILABLE_SDK_IOS(13_0)
-/**
- This component supports UIKit's Large Content Viewer. It is recommended that images associated with
- each tab bar item be backed with a PDF image with "preserve vector data" enabled within the assets
- entry in the catalog. This ensures that the image is scaled appropriately in the content viewer.
- Alternatively specify an image to use for the large content viewer using UITabBarItem's property
- @c largeContentSizeImage . If an image is specified, the given image is used as-is for the large
- content viewer and will not be scaled.
- If the image is not backed by PDF and a @c largeContentSizeImage is not specified, the given
- @c image will be scaled and may be blurry.
- For more details on the Large Content Viewer see:
- https://developer.apple.com/videos/play/wwdc2019/261/
- */
-@interface MDCTabBarView (UILargeContentViewerInteractionDelegate) <
-    UILargeContentViewerInteractionDelegate>
-@end
-#endif  // MDC_AVAILABLE_SDK_IOS(13_0)

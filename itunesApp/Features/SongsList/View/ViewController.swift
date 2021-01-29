@@ -14,7 +14,9 @@ class ViewController: UIViewController {
     var tableView = UITableView()
     var resultsArray: Array<iTunesServiceModel>?
     var resultsDetailArray: Array<iTunesServiceModel>?
-
+    let viewCellIdentifier = "viewCell"
+    let stringToReplace = "[data]"
+    
     init(songsDetails: Array<iTunesServiceModel>) {
         super.init(nibName: nil, bundle: nil)
         self.resultsArray = songsDetails
@@ -28,7 +30,7 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.register(TableViewCell.self, forCellReuseIdentifier:"viewCell")
+        tableView.register(TableViewCell.self, forCellReuseIdentifier:viewCellIdentifier)
         tableView.separatorStyle = .none
         navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.font: UIFont(name: "Chalkduster", size: 27) ?? UIFont.systemFont(ofSize: 18)]
         definesPresentationContext = true
@@ -42,7 +44,7 @@ class ViewController: UIViewController {
     }
     
     func setupViews() {
-        title = "Search results"
+        title = Constants.searchResults
         view.addSubview(tableView)
         tableView.snp.makeConstraints { (make) -> Void in
             make.edges.equalTo(self.view)
@@ -50,7 +52,7 @@ class ViewController: UIViewController {
     }
     
     func getData(label: String, data: iTunesServiceModel) {
-        let finalString = Constants.kSearchAlbumApiUrl.replacingOccurrences(of: "[data]", with: label)
+        let finalString = Constants.kSearchAlbumApiUrl.replacingOccurrences(of: stringToReplace, with: label)
         AF.request(finalString).responseJSON { response in
             switch response.result {
             case .success(_):
@@ -97,7 +99,7 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: "viewCell", for: indexPath) as! TableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: viewCellIdentifier, for: indexPath) as! TableViewCell
         let data = resultsArray?[indexPath.row]
         cell.textLabel?.text = data?.trackName
         cell.textLabel?.numberOfLines = 1

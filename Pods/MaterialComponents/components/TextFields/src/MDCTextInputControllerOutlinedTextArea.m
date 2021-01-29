@@ -99,7 +99,7 @@ static UIRectCorner _roundedCornersDefault = UIRectCornerAllCorners;
  placeholderEstimatedHeight                                           // Height of placeholder
  MDCTextInputTextFieldOutlinedTextAreaHalfPadding +                   // Small padding
  MDCTextInputTextFieldOutlinedTextAreaPaddingAdjustment               // Additional point (iOS specific)
- ceil(MAX(self.textInput.font.lineHeight,                          // Text field or placeholder
+ MDCCeil(MAX(self.textInput.font.lineHeight,                          // Text field or placeholder
              self.textInput.placeholderLabel.font.lineHeight))
  underlineOffset                                                      // Small Padding +
                                                                       // underlineLabelsOffset From super class.
@@ -112,8 +112,8 @@ static UIRectCorner _roundedCornersDefault = UIRectCornerAllCorners;
   UIEdgeInsets textInsets = [super textInsets:defaultInsets withSizeThatFitsWidthHint:widthHint];
   textInsets.top = MDCTextInputTextFieldOutlinedTextAreaHalfPadding +
                    MDCTextInputTextFieldOutlinedTextAreaPaddingAdjustment +
-                   rint(self.textInput.placeholderLabel.font.lineHeight *
-                        (CGFloat)self.floatingPlaceholderScale.floatValue) +
+                   MDCRint(self.textInput.placeholderLabel.font.lineHeight *
+                           (CGFloat)self.floatingPlaceholderScale.floatValue) +
                    MDCTextInputTextFieldOutlinedTextAreaHalfPadding +
                    MDCTextInputTextFieldOutlinedTextAreaPaddingAdjustment;
 
@@ -177,7 +177,7 @@ static UIRectCorner _roundedCornersDefault = UIRectCornerAllCorners;
 
   if (self.textInput.leadingUnderlineLabel.text.length) {
     underlineLabelsOffset =
-        ceil(self.textInput.leadingUnderlineLabel.font.lineHeight * scale) / scale;
+        MDCCeil(self.textInput.leadingUnderlineLabel.font.lineHeight * scale) / scale;
     underlineLabelsOffset =
         MAX(underlineLabelsOffset,
             [MDCTextInputControllerBase
@@ -190,7 +190,7 @@ static UIRectCorner _roundedCornersDefault = UIRectCornerAllCorners;
   if (self.textInput.trailingUnderlineLabel.text.length || self.characterCountMax) {
     underlineLabelsOffset =
         MAX(underlineLabelsOffset,
-            ceil(self.textInput.trailingUnderlineLabel.font.lineHeight * scale) / scale);
+            MDCCeil(self.textInput.trailingUnderlineLabel.font.lineHeight * scale) / scale);
   }
 
   CGFloat underlineOffset = underlineLabelsOffset;

@@ -11,16 +11,13 @@ import Alamofire
 import MBProgressHUD
 import SwiftyGif
 import MaterialComponents
+import PMAlertController
 
 class MainViewController: UIViewController {
     var resultsArray: Array<iTunesServiceModel>?
     var welcomeLabel = UILabel()
     var confirmButton = MDCButton()
     let textField = MDCFilledTextArea()
-    
-    var welcomeText = "WELCOME!"
-    var descriptionLabelText = "Type something to search"
-    var searchText = "Search"
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
@@ -32,12 +29,20 @@ class MainViewController: UIViewController {
         setupViews()
     }
     
+    //Calls this function when the tap is recognized.
+    @objc func dismissKeyboard() {
+        //Causes the view (or one of its embedded text fields) to resign the first responder status.
+        view.endEditing(true)
+    }
+    
     func setupViews() {
         view.addSubview(welcomeLabel)
         view.addSubview(textField)
         view.addSubview(confirmButton)
         view.backgroundColor = .systemBackground
-        
+        let tap = UITapGestureRecognizer(target: self, action: #selector(UIInputViewController.dismissKeyboard))
+        view.addGestureRecognizer(tap)
+
         welcomeLabel.snp.makeConstraints { (make) -> Void in
             make.top.equalTo(self.view.snp.top).offset(100)
             make.centerX.equalTo(self.view)
@@ -56,13 +61,13 @@ class MainViewController: UIViewController {
             make.width.equalTo(200)
         }
         
-        textField.label.text = descriptionLabelText
+        textField.label.text = Constants.descriptionLabelText
         textField.sizeToFit()
         
-        welcomeLabel.text = welcomeText
+        welcomeLabel.text = Constants.welcomeText
         welcomeLabel.font = UIFont(name: "Chalkduster", size: 50)
         
-        confirmButton.setTitle(searchText, for: .normal)
+        confirmButton.setTitle(Constants.searchText, for: .normal)
         confirmButton.addTarget(self, action: #selector(confirmButtonAction), for: .touchUpInside)
         confirmButton.setTitleColor(.black, for: .normal)
         confirmButton.backgroundColor = .systemPurple
@@ -85,6 +90,7 @@ class MainViewController: UIViewController {
     }
     
     @objc func confirmButtonAction() {
+        dismissKeyboard()
         showLoading()
         if let textFieldString = textField.textView.text, textFieldString != "" {
             var finalString = textFieldString.replacingOccurrences(of: " ", with: "+")
@@ -105,6 +111,10 @@ class MainViewController: UIViewController {
             getData(label: finalString.lowercased())
         } else {
             hideLoading()
+            let alertVC = PMAlertController(title: Constants.errorSearchMessage, description: nil, image: nil, style: .alert)
+            alertVC.addAction(PMAlertAction(title: Constants.okString, style: .default, action: { () in
+            }))
+            self.present(alertVC, animated: true, completion: nil)
         }
     }
     
@@ -122,6 +132,13 @@ class MainViewController: UIViewController {
                     print(error.localizedDescription)
                 }
                 self.hideLoading()
+                if self.resultsArray?.count == 0 {
+                    let alertVC = PMAlertController(title: Constants.errorNoSongsFoundMessage, description: nil, image: nil, style: .alert)
+                    alertVC.addAction(PMAlertAction(title: Constants.okString, style: .default, action: { () in
+                        return
+                    }))
+                    self.present(alertVC, animated: true, completion: nil)
+                }
                 let viewController = ViewController(songsDetails: self.resultsArray ?? [])
                 self.navigationController?.pushViewController(viewController, animated: true)
             case .failure(let error):

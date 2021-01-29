@@ -19,6 +19,7 @@
 #import <MDFInternationalization/MDFInternationalization.h>
 
 #import "MaterialInk.h"
+#import "MaterialMath.h"
 #import "MaterialTypography.h"
 
 #import "private/MDCSelfSizingStereoCellLayout.h"
@@ -169,7 +170,7 @@ static const CGFloat kDetailColorOpacity = (CGFloat)0.6;
 #pragma mark Layout
 
 - (MDCSelfSizingStereoCellLayout *)layoutForCellWidth:(CGFloat)cellWidth {
-  CGFloat flooredCellWidth = floor(cellWidth);
+  CGFloat flooredCellWidth = MDCFloor(cellWidth);
   MDCSelfSizingStereoCellLayout *layout = self.cachedLayouts[@(flooredCellWidth)];
   if (!layout) {
     layout = [[MDCSelfSizingStereoCellLayout alloc] initWithLeadingImageView:self.leadingImageView

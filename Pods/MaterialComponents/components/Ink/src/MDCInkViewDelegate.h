@@ -20,7 +20,7 @@
  Delegate protocol for MDCInkView. Clients may implement this protocol to receive updates when ink
  layer start and end.
  */
-__deprecated_msg("Please use MDCRippleViewDelegate instead.") @protocol MDCInkViewDelegate<NSObject>
+@protocol MDCInkViewDelegate <NSObject>
 
 @optional
 

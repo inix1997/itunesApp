@@ -95,8 +95,8 @@ static const CGFloat kMinimumHeaderHeight = 8;
     contentHeight = kMinimumHeaderHeight;
   }
   CGSize contentSize;
-  contentSize.width = ceil(size.width);
-  contentSize.height = ceil(contentHeight);
+  contentSize.width = MDCCeil(size.width);
+  contentSize.height = MDCCeil(contentHeight);
   return contentSize;
 }
 
